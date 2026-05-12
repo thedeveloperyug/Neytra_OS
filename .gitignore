@@ -1,0 +1,8 @@
+output/
+*.img
+*.iso
+*.o
+*.a
+*.so
+*.log
+kernel/

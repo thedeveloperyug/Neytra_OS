@@ -1,0 +1,1 @@
+// WifiManager.cpp - placeholder

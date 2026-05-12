@@ -1,0 +1,1 @@
+// SocketManager.cpp - placeholder

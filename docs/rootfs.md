@@ -1,0 +1,3 @@
+# Rootfs
+
+Placeholder rootfs documentation.
