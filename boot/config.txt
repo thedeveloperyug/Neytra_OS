@@ -1,0 +1,3 @@
+# Raspberry Pi boot configuration
+# Placeholder config
+adjust_overscan=0

@@ -1,0 +1,3 @@
+# Placeholder inittab for Bharat OS
+::sysinit:/etc/init.d/rcS
+::respawn:/bin/sh

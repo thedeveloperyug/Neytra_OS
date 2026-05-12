@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Neytra OS Shutdown Command
+# Usage: shutdown [-h | -r] [delay]
+
+delay=0
+action="poweroff"
+
+# Parse arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--halt)
+            action="halt"
+            ;;
+        -r|--reboot)
+            action="reboot"
+            ;;
+        -p|--poweroff)
+            action="poweroff"
+            ;;
+        [0-9]*)
+            delay=$1
+            ;;
+        *)
+            echo "Usage: shutdown [-h|--halt] [-r|--reboot] [-p|--poweroff] [delay_seconds]"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# Wait if delay is specified
+if [ $delay -gt 0 ]; then
+    echo "System shutting down in $delay seconds..."
+    sleep $delay
+fi
+
+# Sync filesystems
+echo "Syncing filesystems..."
+sync
+sleep 1
+
+# Execute the action
+echo "Executing $action..."
+case "$action" in
+    halt)
+        $action -f
+        ;;
+    reboot)
+        $action -f
+        ;;
+    poweroff|*)
+        $action -f
+        ;;
+esac
