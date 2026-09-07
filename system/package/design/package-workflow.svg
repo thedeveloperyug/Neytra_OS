@@ -1,0 +1,35 @@
+<svg viewBox="0 0 940 714" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect x="0" y="0" width="940" height="714" fill="#ffffff"/>
+<text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/package/ — Detailed Workflow</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned install sequence — no headers exist yet; this is the intended design</text>
+<rect x="110" y="78" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Shell / user requests an install</text>
+<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">e.g. neytra&gt; pkg install &lt;name&gt;</text>
+<line x1="470" y1="127" x2="470" y2="167" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="167" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. PackageManager.install(name)</text>
+<text x="470" y="204" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">top-level coordinator for install / remove / upgrade / query</text>
+<text x="470" y="221" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">no header exists yet — API not designed</text>
+<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="272" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Repository.lookup(name)</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">resolves version + dependency list from the package index</text>
+<line x1="470" y1="321" x2="470" y2="361" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="361" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. Downloader.fetch(url)</text>
+<text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">downloads the package archive</text>
+<text x="470" y="415" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">depends on system/network/ (also a stub)</text>
+<line x1="470" y1="426" x2="470" y2="466" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="466" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="488" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Installer.unpack(archive)</text>
+<text x="470" y="503" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">extracts files into rootfs/{usr,opt,srv}/</text>
+<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="555" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. PackageManager records installed state</text>
+<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">updates the local package database for future queries</text>
+<line x1="110" y1="634" x2="830" y2="634" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="648" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="144" y="661" font-size="11" fill="#1f2937">Planned / stub only</text>
+<text x="470" y="704" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; package-workflow.svg</text>
+</svg>

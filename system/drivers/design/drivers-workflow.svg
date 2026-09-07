@@ -1,0 +1,87 @@
+<svg viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="620" fill="#ffffff"/>
+
+  <text x="500" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/drivers/ — Detailed Workflow</text>
+  <text x="500" y="48" text-anchor="middle" font-size="12" fill="#64748b">Four independent peripheral drivers (no shared parent class) — no header files exist yet, this is the intended API shape</text>
+
+  <text x="145" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">GPIO</text>
+  <text x="375" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">I2C</text>
+  <text x="605" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">SPI</text>
+  <text x="855" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">UART</text>
+
+  <!-- GPIO column -->
+  <rect x="40" y="90" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="145" y="115" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">GPIO::configure(pin, mode)</text>
+  <text x="145" y="132" text-anchor="middle" font-size="10.5" fill="#374151">set pin as input/output</text>
+  <line x1="145" y1="166" x2="145" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="40" y="186" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="145" y="211" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">GPIO::write(pin, value)</text>
+  <text x="145" y="228" text-anchor="middle" font-size="10.5" fill="#374151">drive a pin high/low</text>
+  <line x1="145" y1="262" x2="145" y2="282" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="40" y="282" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="145" y="307" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">GPIO::read(pin)</text>
+  <text x="145" y="324" text-anchor="middle" font-size="10.5" fill="#374151">sample a pin's level</text>
+
+  <!-- I2C column -->
+  <rect x="270" y="90" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="375" y="115" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">I2C::open(bus)</text>
+  <text x="375" y="132" text-anchor="middle" font-size="10.5" fill="#374151">select /dev/i2c-N</text>
+  <line x1="375" y1="166" x2="375" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="270" y="186" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="375" y="211" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">I2C::write(addr, data)</text>
+  <text x="375" y="228" text-anchor="middle" font-size="10.5" fill="#374151">send bytes to a device</text>
+  <line x1="375" y1="262" x2="375" y2="282" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="270" y="282" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="375" y="307" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">I2C::read(addr, len)</text>
+  <text x="375" y="324" text-anchor="middle" font-size="10.5" fill="#374151">receive bytes back</text>
+
+  <!-- SPI column -->
+  <rect x="500" y="90" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="605" y="115" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">SPI::open(bus, mode)</text>
+  <text x="605" y="132" text-anchor="middle" font-size="10.5" fill="#374151">configure clock + mode</text>
+  <line x1="605" y1="166" x2="605" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="500" y="186" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="605" y="211" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">SPI::transfer(tx, rx)</text>
+  <text x="605" y="228" text-anchor="middle" font-size="10.5" fill="#374151">full-duplex byte exchange</text>
+  <line x1="605" y1="262" x2="605" y2="282" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="500" y="282" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="605" y="315" text-anchor="middle" font-size="10.5" fill="#374151">used by displays, ADCs, ...</text>
+
+  <!-- UART column -->
+  <rect x="730" y="90" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="835" y="115" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">UART::open(dev, baud)</text>
+  <text x="835" y="132" text-anchor="middle" font-size="10.5" fill="#374151">configure a serial port</text>
+  <line x1="835" y1="166" x2="835" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="730" y="186" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="835" y="211" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">UART::write(bytes)</text>
+  <text x="835" y="228" text-anchor="middle" font-size="10.5" fill="#374151">send serial data</text>
+  <line x1="835" y1="262" x2="835" y2="282" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="730" y="282" width="210" height="76" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="835" y="307" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1f2937">UART::read(bytes)</text>
+  <text x="835" y="324" text-anchor="middle" font-size="10.5" fill="#374151">receive serial data</text>
+
+  <!-- merge to consumers -->
+  <line x1="145" y1="358" x2="145" y2="388" stroke="#475569" stroke-width="2"/>
+  <line x1="375" y1="358" x2="375" y2="388" stroke="#475569" stroke-width="2"/>
+  <line x1="605" y1="358" x2="605" y2="388" stroke="#475569" stroke-width="2"/>
+  <line x1="835" y1="358" x2="835" y2="388" stroke="#475569" stroke-width="2"/>
+  <line x1="145" y1="388" x2="835" y2="388" stroke="#475569" stroke-width="2"/>
+  <line x1="500" y1="388" x2="500" y2="398" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="40" y="398" width="920" height="100" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="500" y="424" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">Future consumers (once implemented)</text>
+  <text x="500" y="444" text-anchor="middle" font-size="11" fill="#374151">system/gui/Framebuffer over SPI/DSI  ·  sensors over I2C  ·  external modules over UART  ·  board control over GPIO</text>
+  <text x="500" y="464" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">Raspberry Pi 4B (BCM2711) target only — not used by the x86_64/QEMU path</text>
+  <text x="500" y="482" text-anchor="middle" font-size="10" fill="#374151">see docs/raspberrypi.md</text>
+
+  <line x1="40" y1="522" x2="960" y2="522" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="538" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="74" y="551" font-size="11" fill="#1f2937">Planned / stub only</text>
+
+  <text x="500" y="600" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS · drivers-workflow.svg</text>
+</svg>

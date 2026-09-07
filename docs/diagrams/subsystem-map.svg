@@ -1,0 +1,132 @@
+<svg viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow5" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="650" fill="#ffffff"/>
+
+  <text x="500" y="28" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Neytra OS — system/ Subsystem Map</text>
+  <text x="500" y="48" text-anchor="middle" font-size="12.5" fill="#64748b">Planned C++ architecture inferred from folder layout — every class below is currently an empty stub</text>
+
+  <!-- entry point -->
+  <rect x="360" y="70" width="280" height="46" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="88" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">system/init/main.cpp</text>
+  <text x="500" y="103" text-anchor="middle" font-size="9.5" font-family="Consolas, monospace" fill="#1d4ed8">int main_init() { return 0; }</text>
+  <line x1="500" y1="116" x2="500" y2="136" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+
+  <!-- InitManager -->
+  <rect x="360" y="136" width="280" height="54" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="500" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">InitManager</text>
+  <text x="500" y="172" text-anchor="middle" font-size="9.5" fill="#374151">system/init/InitManager.hpp / .cpp</text>
+  <text x="500" y="184" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned — empty class today</text>
+
+  <!-- fan to row1 -->
+  <line x1="500" y1="190" x2="170" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="500" y1="190" x2="500" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="500" y1="190" x2="830" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+
+  <!-- Row1 -->
+  <rect x="40" y="220" width="260" height="70" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="170" y="243" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">MountManager</text>
+  <text x="170" y="259" text-anchor="middle" font-size="9.5" fill="#374151">system/init/MountManager.*</text>
+  <text x="170" y="273" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned — empty class today</text>
+
+  <rect x="370" y="220" width="260" height="70" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="500" y="243" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">ServiceManager</text>
+  <text x="500" y="259" text-anchor="middle" font-size="9.5" fill="#374151">system/init/ServiceManager.*</text>
+  <text x="500" y="273" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned — starts subsystems below</text>
+
+  <rect x="700" y="220" width="260" height="70" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="830" y="243" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">Logger</text>
+  <text x="830" y="259" text-anchor="middle" font-size="9.5" fill="#374151">system/logger/Logger.*</text>
+  <text x="830" y="273" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned — empty class today</text>
+
+  <!-- bus to subsystem cards -->
+  <line x1="500" y1="290" x2="500" y2="315" stroke="#475569" stroke-width="2"/>
+  <line x1="100" y1="315" x2="899" y2="315" stroke="#475569" stroke-width="2"/>
+  <line x1="100" y1="315" x2="100" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="234" y1="315" x2="234" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="367" y1="315" x2="367" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="500" y1="315" x2="500" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="633" y1="315" x2="633" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="766" y1="315" x2="766" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+  <line x1="899" y1="315" x2="899" y2="340" stroke="#475569" stroke-width="2" marker-end="url(#arrow5)"/>
+
+  <!-- 7 subsystem cards -->
+  <g font-size="9" fill="#374151">
+    <!-- Shell -->
+    <rect x="40" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="100" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Shell</text>
+    <text x="100" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/shell/</text>
+    <text x="100" y="392" text-anchor="middle">Shell</text>
+    <text x="100" y="406" text-anchor="middle">CommandParser</text>
+    <text x="100" y="420" text-anchor="middle">BuiltinCommands</text>
+    <text x="100" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Process -->
+    <rect x="173" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="234" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Process</text>
+    <text x="234" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/process/</text>
+    <text x="234" y="392" text-anchor="middle">ProcessManager</text>
+    <text x="234" y="406" text-anchor="middle">Scheduler</text>
+    <text x="234" y="420" text-anchor="middle">IPC</text>
+    <text x="234" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Network -->
+    <rect x="306" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="367" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Network</text>
+    <text x="367" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/network/</text>
+    <text x="367" y="392" text-anchor="middle">NetworkManager</text>
+    <text x="367" y="406" text-anchor="middle">DHCPClient</text>
+    <text x="367" y="420" text-anchor="middle">WifiManager</text>
+    <text x="367" y="434" text-anchor="middle">SocketManager</text>
+    <text x="367" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Package -->
+    <rect x="439" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="500" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Package</text>
+    <text x="500" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/package/</text>
+    <text x="500" y="392" text-anchor="middle">PackageManager</text>
+    <text x="500" y="406" text-anchor="middle">Downloader</text>
+    <text x="500" y="420" text-anchor="middle">Installer</text>
+    <text x="500" y="434" text-anchor="middle">Repository</text>
+    <text x="500" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Security -->
+    <rect x="572" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="633" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Security</text>
+    <text x="633" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/security/</text>
+    <text x="633" y="392" text-anchor="middle">UserManager</text>
+    <text x="633" y="406" text-anchor="middle">PermissionManager</text>
+    <text x="633" y="420" text-anchor="middle">Sandbox</text>
+    <text x="633" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Drivers -->
+    <rect x="705" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="766" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">Drivers</text>
+    <text x="766" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/drivers/</text>
+    <text x="766" y="396" text-anchor="middle">GPIO · I2C</text>
+    <text x="766" y="410" text-anchor="middle">SPI · UART</text>
+    <text x="766" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned (RPi HAL)</text>
+
+    <!-- GUI -->
+    <rect x="838" y="340" width="121" height="140" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="899" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">GUI</text>
+    <text x="899" y="376" text-anchor="middle" font-size="7.5" fill="#92400e">system/gui/</text>
+    <text x="899" y="392" text-anchor="middle">WindowManager</text>
+    <text x="899" y="406" text-anchor="middle">Desktop · Renderer</text>
+    <text x="899" y="420" text-anchor="middle">Framebuffer</text>
+    <text x="899" y="468" text-anchor="middle" font-size="8.5" font-style="italic" fill="#92400e">planned</text>
+  </g>
+
+  <!-- legend -->
+  <line x1="40" y1="500" x2="960" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="516" width="28" height="18" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="76" y="529" font-size="11.5" fill="#1f2937">Real, active code today</text>
+  <rect x="500" y="516" width="28" height="18" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="536" y="529" font-size="11.5" fill="#1f2937">Planned — empty stub class, no logic</text>
+  <text x="500" y="565" text-anchor="middle" font-size="10" fill="#6b7280">Arrows show a proposed ownership hierarchy inferred from directory layout — not yet expressed in code.</text>
+
+  <text x="500" y="615" text-anchor="middle" font-size="10.5" fill="#94a3b8">Neytra OS · docs/diagrams/subsystem-map.svg</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg viewBox="0 0 940 954" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect x="0" y="0" width="940" height="954" fill="#ffffff"/>
+<text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/logger/ — Detailed Workflow</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Runtime call path for a single log call, from any caller through to both output sinks</text>
+<rect x="110" y="78" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Caller invokes Logger</text>
+<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">Logger::instance().info(tag, message);</text>
+<text x="470" y="132" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">any system/ subsystem may call this</text>
+<line x1="470" y1="143" x2="470" y2="183" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="183" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. Logger::instance()</text>
+<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">function-local static Logger&amp; — no manual construction/ownership</text>
+<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="272" width="720" height="64" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Convenience wrapper</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">debug() / info() / warn() / error()</text>
+<text x="470" y="324" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">each forwards to log(level, tag, message)</text>
+<line x1="470" y1="336" x2="470" y2="376" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="376" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="398" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. Level filter</text>
+<text x="470" y="413" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">if (level &lt; minLevel_) return;</text>
+<text x="470" y="430" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">message dropped here if below threshold (default minLevel_ = Info)</text>
+<line x1="470" y1="441" x2="470" y2="481" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="481" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="503" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Build timestamp</text>
+<text x="470" y="518" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">std::time(nullptr) -&gt; localtime_r() -&gt; strftime("%H:%M:%S")</text>
+<line x1="470" y1="530" x2="470" y2="570" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="570" width="720" height="64" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="592" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Pick sink stream + ANSI color</text>
+<text x="470" y="607" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">stream = (level &gt;= Warn) ? stderr : stdout;</text>
+<text x="470" y="622" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">color  = levelColor(level);  // dim/cyan/yellow/red</text>
+<line x1="470" y1="634" x2="470" y2="674" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="674" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="696" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. Console output (always)</text>
+<text x="470" y="711" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">fprintf(stream, "%s[time] [LVL] [tag] msg\033[0m\n", ...)</text>
+<text x="470" y="728" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">matches rootfs/init's boot-banner ANSI palette</text>
+<line x1="470" y1="739" x2="470" y2="779" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="779" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="801" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">8. Optional file sink</text>
+<text x="470" y="816" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">if (logFile_.is_open()) { logFile_ &lt;&lt; ...; logFile_.flush(); }</text>
+<text x="470" y="833" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">enabled via setLogFile(path); plain text, no ANSI codes</text>
+<line x1="110" y1="874" x2="830" y2="874" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="888" width="26" height="16" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="144" y="901" font-size="11" fill="#1f2937">Implemented &amp; active</text>
+<text x="470" y="944" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; logger-workflow.svg</text>
+</svg>

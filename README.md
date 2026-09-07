@@ -1,10 +1,10 @@
 <h1>NEYTRA OS</h1>
 
 ## Author: Yogesh Pandey
+
 <h5>Copyright (c) 2026 Neytra OS Contributors<h5>
 
 # README.md for Neytra OS
-
 
 # Neytra OS
 
@@ -16,6 +16,8 @@ Neytra OS is a custom Linux-based operating system project focused on:
 - custom init systems
 - C++ systems programming
 - Raspberry Pi support later
+
+> 📚 **Full technical documentation, architecture diagrams, and the current build status live in [`docs/`](docs/README.md).** This README is the original phase-by-phase learning tutorial; `docs/` reflects the verified, current state of the repository.
 
 ---
 
@@ -380,7 +382,6 @@ Now boot easily:
 
 ---
 
-
 Focus on:
 
 - boot process
@@ -416,5 +417,16 @@ That is how real Linux systems evolve.
 
 - Raspberry Pi deployment
 - ARM64 support
+
+---
+
+# Documentation
+
+This README stays as the original step-by-step tutorial. For the maintained, up-to-date picture of the project — including which of the phases above are actually done, architecture diagrams, and a full directory reference — see [`docs/README.md`](docs/README.md):
+
+- [docs/project-structure.md](docs/project-structure.md) — tour of every directory
+- [docs/architecture.md](docs/architecture.md) — layered architecture, current vs. planned
+- [docs/development-workflow.md](docs/development-workflow.md) — day-to-day build/run/debug loop
+- [docs/roadmap.md](docs/roadmap.md) — real phase-by-phase status checklist
 
 ---

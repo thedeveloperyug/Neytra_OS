@@ -1,0 +1,36 @@
+<svg viewBox="0 0 940 730" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect x="0" y="0" width="940" height="730" fill="#ffffff"/>
+<text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/network/ — Detailed Workflow</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned interface bring-up sequence — no headers exist yet; this is the intended design</text>
+<rect x="110" y="78" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. ServiceManager starts NetworkManager</text>
+<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">system/init/ServiceManager (also a stub) would own this</text>
+<line x1="470" y1="127" x2="470" y2="167" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="167" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. NetworkManager.bringUp(iface)</text>
+<text x="470" y="204" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">brings a network interface up</text>
+<text x="470" y="221" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">no header exists yet — API not designed</text>
+<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="272" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. DHCPClient.acquire(iface)</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">DISCOVER -&gt; OFFER -&gt; REQUEST -&gt; ACK</text>
+<text x="470" y="326" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">obtains an IP lease</text>
+<line x1="470" y1="337" x2="470" y2="377" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="377" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="399" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. WifiManager.scan() / associate(ssid)</text>
+<text x="470" y="414" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">only for wireless interfaces (mainly the Raspberry Pi target)</text>
+<line x1="470" y1="426" x2="470" y2="466" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="466" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="488" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. NetworkManager tracks interface state</text>
+<text x="470" y="503" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">renews the DHCP lease periodically, reports link up/down</text>
+<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="555" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. SocketManager opens sockets on demand</text>
+<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">used by other subsystems, e.g. system/package/Downloader</text>
+<text x="470" y="609" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">see docs/networking.md for the fuller design</text>
+<line x1="110" y1="650" x2="830" y2="650" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="664" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="144" y="677" font-size="11" fill="#1f2937">Planned / stub only</text>
+<text x="470" y="720" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; network-workflow.svg</text>
+</svg>

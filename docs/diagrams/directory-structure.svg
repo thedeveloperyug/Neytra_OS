@@ -1,0 +1,118 @@
+<svg viewBox="0 0 1100 1180" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1100" height="1180" fill="#ffffff"/>
+  <text x="550" y="28" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Neytra OS — Repository Layout</text>
+  <text x="550" y="48" text-anchor="middle" font-size="12.5" fill="#64748b">Top-level directories grouped by purpose, with implementation status</text>
+
+  <!-- Cluster A: Boot & Kernel -->
+  <rect x="40" y="80" width="500" height="190" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="290" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Boot &amp; Kernel</text>
+  <rect x="56" y="120" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80" y="138" font-size="12" font-weight="700" fill="#1f2937">kernel/linux/</text>
+  <text x="80" y="153" font-size="10" fill="#374151">Linux 7.1.0-rc3 source tree (gitignored, cloned locally)</text>
+  <text x="80" y="167" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE — x86_64 built</text>
+  <rect x="56" y="186" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="204" font-size="12" font-weight="700" fill="#1f2937">boot/</text>
+  <text x="80" y="219" font-size="10" fill="#374151">config.txt · cmdline.txt · kernel8.img · *.dtb · overlays/</text>
+  <text x="80" y="233" font-size="9.5" font-style="italic" fill="#92400e">PARTIAL — RPi files present, untested</text>
+
+  <!-- Cluster F: Docs & Meta -->
+  <rect x="560" y="80" width="500" height="260" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="810" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Docs &amp; Meta</text>
+  <rect x="576" y="120" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="600" y="138" font-size="12" font-weight="700" fill="#1f2937">docs/</text>
+  <text x="600" y="153" font-size="10" fill="#374151">architecture · boot-process · rootfs · roadmap · workflow + diagrams/*.svg</text>
+  <text x="600" y="167" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE</text>
+  <rect x="576" y="186" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="600" y="204" font-size="12" font-weight="700" fill="#1f2937">README.md · dev_setup.md · dev_setup_env.sh</text>
+  <text x="600" y="219" font-size="10" fill="#374151">phase-by-phase build tutorial + environment bootstrap script</text>
+  <text x="600" y="233" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE</text>
+  <rect x="576" y="252" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="270" font-size="12" font-weight="700" fill="#1f2937">CMakeLists.txt · Makefile · VERSION · LICENSE</text>
+  <text x="600" y="285" font-size="10" fill="#374151">build wiring placeholders · version 0.1.0 · GPLv3</text>
+  <text x="600" y="299" font-size="9.5" font-style="italic" fill="#92400e">PLACEHOLDER build files</text>
+
+  <!-- Cluster B: Root Filesystem -->
+  <rect x="40" y="364" width="500" height="330" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="290" y="388" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Root Filesystem</text>
+  <rect x="56" y="404" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80" y="422" font-size="12" font-weight="700" fill="#1f2937">rootfs/bin/, rootfs/sbin/</text>
+  <text x="80" y="437" font-size="10" fill="#374151">BusyBox v1.36.1 static + applet symlinks; shutdown/halt/reboot</text>
+  <text x="80" y="451" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE</text>
+  <rect x="56" y="470" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="488" font-size="12" font-weight="700" fill="#1f2937">rootfs/etc/</text>
+  <text x="80" y="503" font-size="10" fill="#374151">inittab · hostname · motd · init.d/ · network/ (mostly empty)</text>
+  <text x="80" y="517" font-size="9.5" font-style="italic" fill="#92400e">PARTIAL</text>
+  <rect x="56" y="536" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80" y="554" font-size="12" font-weight="700" fill="#1f2937">rootfs/init</text>
+  <text x="80" y="569" font-size="10" fill="#374151">PID 1 shell script — mounts, banner, signal traps, exec sh</text>
+  <text x="80" y="583" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE</text>
+  <rect x="56" y="602" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80" y="620" font-size="12" font-weight="700" fill="#1f2937">proc/ sys/ dev/ tmp/ usr/ var/ home/ mnt/ media/ opt/ srv/</text>
+  <text x="80" y="635" font-size="10" fill="#374151">standard FHS mount points and directories</text>
+  <text x="80" y="649" font-size="9.5" font-style="italic" fill="#1d4ed8">ACTIVE</text>
+
+  <!-- Cluster C: Application Layer -->
+  <rect x="560" y="364" width="500" height="330" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="810" y="388" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Application Layer — system/, apps/, services/</text>
+  <rect x="576" y="404" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="422" font-size="12" font-weight="700" fill="#1f2937">system/init/, logger/, shell/</text>
+  <text x="600" y="437" font-size="10" fill="#374151">InitManager · MountManager · ServiceManager · Logger · Shell</text>
+  <text x="600" y="451" font-size="9.5" font-style="italic" fill="#92400e">STUB — empty classes</text>
+  <rect x="576" y="470" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="488" font-size="12" font-weight="700" fill="#1f2937">system/drivers/, gui/</text>
+  <text x="600" y="503" font-size="10" fill="#374151">GPIO · I2C · SPI · UART · WindowManager · Renderer · Framebuffer</text>
+  <text x="600" y="517" font-size="9.5" font-style="italic" fill="#92400e">STUB — empty classes</text>
+  <rect x="576" y="536" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="554" font-size="12" font-weight="700" fill="#1f2937">system/network/, package/, process/, security/</text>
+  <text x="600" y="569" font-size="10" fill="#374151">12 classes across 4 planned subsystems</text>
+  <text x="600" y="583" font-size="9.5" font-style="italic" fill="#92400e">STUB — empty classes</text>
+  <rect x="576" y="602" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="620" font-size="12" font-weight="700" fill="#1f2937">apps/, services/</text>
+  <text x="600" y="635" font-size="10" fill="#374151">5 apps + 5 services — folders only (.gitkeep)</text>
+  <text x="600" y="649" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+
+  <!-- Cluster D: Build & Tooling -->
+  <rect x="40" y="718" width="500" height="330" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="290" y="742" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Build &amp; Tooling</text>
+  <rect x="56" y="758" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="776" font-size="12" font-weight="700" fill="#1f2937">scripts/ (11 files)</text>
+  <text x="80" y="791" font-size="10" fill="#374151">4 real scripts + 7 echo-only placeholders (see dev-workflow doc)</text>
+  <text x="80" y="805" font-size="9.5" font-style="italic" fill="#92400e">MIXED</text>
+  <rect x="56" y="824" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="842" font-size="12" font-weight="700" fill="#1f2937">configs/{kernel,network,qemu,system}/</text>
+  <text x="80" y="857" font-size="10" fill="#374151">reserved for versioned configuration files</text>
+  <text x="80" y="871" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+  <rect x="56" y="890" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="908" font-size="12" font-weight="700" fill="#1f2937">toolchain/{cross,gcc,sysroot}/</text>
+  <text x="80" y="923" font-size="10" fill="#374151">reserved for the ARM64 cross-compiler toolchain</text>
+  <text x="80" y="937" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+  <rect x="56" y="956" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="80" y="974" font-size="12" font-weight="700" fill="#1f2937">third_party/{busybox,dropbear,zlib}/</text>
+  <text x="80" y="989" font-size="10" fill="#374151">reserved for vendored upstream sources</text>
+  <text x="80" y="1003" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+
+  <!-- Cluster E: Artifacts & Testing -->
+  <rect x="560" y="718" width="500" height="260" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="810" y="742" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Artifacts &amp; Testing</text>
+  <rect x="576" y="758" width="468" height="58" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="600" y="776" font-size="12" font-weight="700" fill="#1f2937">output/</text>
+  <text x="600" y="791" font-size="10" fill="#374151">initramfs.cpio.gz + {binaries,images,iso,kernel,logs,rootfs}/</text>
+  <text x="600" y="805" font-size="9.5" font-style="italic" fill="#1d4ed8">GENERATED (gitignored)</text>
+  <rect x="576" y="824" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="842" font-size="12" font-weight="700" fill="#1f2937">qemu/{disks,firmware,logs,snapshots}/</text>
+  <text x="600" y="857" font-size="10" fill="#374151">reserved for QEMU run artifacts</text>
+  <text x="600" y="871" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+  <rect x="576" y="890" width="468" height="58" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="600" y="908" font-size="12" font-weight="700" fill="#1f2937">tests/{init,kernel,network,shell}/</text>
+  <text x="600" y="923" font-size="10" fill="#374151">reserved for automated tests</text>
+  <text x="600" y="937" font-size="9.5" font-style="italic" fill="#92400e">EMPTY scaffold</text>
+
+  <!-- Legend -->
+  <line x1="40" y1="1068" x2="1060" y2="1068" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="1084" width="28" height="18" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="76" y="1097" font-size="11.5" fill="#1f2937">Implemented / active / generated</text>
+  <rect x="560" y="1084" width="28" height="18" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="596" y="1097" font-size="11.5" fill="#1f2937">Planned, partial, or empty scaffold</text>
+
+  <text x="550" y="1150" text-anchor="middle" font-size="10.5" fill="#94a3b8">Neytra OS · docs/diagrams/directory-structure.svg</text>
+</svg>

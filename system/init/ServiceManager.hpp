@@ -1,5 +1,10 @@
-// ServiceManager.hpp - placeholder
-
+// ServiceManager.hpp - placeholder IServiceManager implementation.
 #pragma once
 
-class ServiceManager {};
+#include "IServiceManager.hpp"
+
+class ServiceManager : public IServiceManager {
+public:
+    bool startAll() override;
+};
+

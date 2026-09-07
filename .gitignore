@@ -6,3 +6,4 @@ output/
 *.so
 *.log
 kernel/
+build/
