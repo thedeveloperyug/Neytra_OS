@@ -1,0 +1,132 @@
+<svg viewBox="0 0 1000 1400" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="1400" fill="#ffffff"/>
+
+  <text x="500" y="28" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Neytra OS — Boot Sequence</text>
+  <text x="500" y="48" text-anchor="middle" font-size="12.5" fill="#64748b">From power-on to an interactive shell, for both supported boot paths</text>
+
+  <!-- Start -->
+  <rect x="350" y="90" width="300" height="50" rx="25" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="500" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Power On</text>
+  <line x1="500" y1="140" x2="265" y2="168" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="500" y1="140" x2="735" y2="168" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <text x="265" y="162" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">x86_64 / QEMU path</text>
+  <text x="735" y="162" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Raspberry Pi 4B path</text>
+
+  <!-- Fork row 1 -->
+  <rect x="40" y="170" width="452" height="64" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="266" y="196" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">QEMU launched</text>
+  <text x="266" y="214" text-anchor="middle" font-size="10.5" fill="#374151">scripts/run_qemu_x86.sh — ACTIVE</text>
+
+  <rect x="508" y="170" width="452" height="64" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="196" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">SD Card Boot</text>
+  <text x="734" y="214" text-anchor="middle" font-size="10.5" fill="#374151">bootcode.bin / GPU firmware reads boot files — PARTIAL</text>
+
+  <line x1="266" y1="234" x2="266" y2="264" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="734" y1="234" x2="734" y2="264" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- Fork row 2 -->
+  <rect x="40" y="264" width="452" height="64" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="266" y="290" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">-kernel bzImage -initrd initramfs.cpio.gz</text>
+  <text x="266" y="308" text-anchor="middle" font-size="10.5" fill="#374151">loaded directly into VM RAM</text>
+
+  <rect x="508" y="264" width="452" height="64" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="290" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Reads config.txt + cmdline.txt</text>
+  <text x="734" y="308" text-anchor="middle" font-size="10.5" fill="#374151">loads kernel8.img + bcm2711-rpi-4-b.dtb</text>
+
+  <!-- merge bus -->
+  <line x1="266" y1="328" x2="266" y2="345" stroke="#475569" stroke-width="2"/>
+  <line x1="734" y1="328" x2="734" y2="345" stroke="#475569" stroke-width="2"/>
+  <line x1="266" y1="345" x2="734" y2="345" stroke="#475569" stroke-width="2"/>
+  <line x1="500" y1="345" x2="500" y2="358" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- Kernel starts -->
+  <rect x="220" y="358" width="560" height="64" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="384" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2937">Linux Kernel Starts</text>
+  <text x="500" y="402" text-anchor="middle" font-size="10.5" fill="#374151">decompress · init memory mgmt · probe drivers · mount devtmpfs</text>
+  <line x1="500" y1="422" x2="500" y2="452" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- Mount initramfs -->
+  <rect x="220" y="452" width="560" height="54" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="484" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">Kernel mounts initramfs (cpio archive) as rootfs (/)</text>
+  <line x1="500" y1="506" x2="500" y2="536" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- exec /init -->
+  <rect x="220" y="536" width="560" height="54" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="568" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">Kernel executes /init as PID 1  (cmdline: init=/init)</text>
+  <line x1="500" y1="590" x2="500" y2="620" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- mount proc -->
+  <rect x="260" y="620" width="480" height="46" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="648" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#1f2937">/init: mount -t proc proc /proc</text>
+  <line x1="500" y1="666" x2="500" y2="690" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- mount sysfs -->
+  <rect x="260" y="690" width="480" height="46" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="718" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#1f2937">/init: mount -t sysfs sysfs /sys</text>
+  <line x1="500" y1="736" x2="500" y2="760" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- mount devtmpfs -->
+  <rect x="260" y="760" width="480" height="46" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="788" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#1f2937">/init: mount -t devtmpfs devtmpfs /dev</text>
+  <line x1="500" y1="806" x2="500" y2="830" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- banner -->
+  <rect x="260" y="830" width="480" height="52" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="853" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2937">/init: print welcome banner</text>
+  <text x="500" y="870" text-anchor="middle" font-size="10" font-family="Consolas, monospace" fill="#1d4ed8">"Welcome to Neytra OS 2026"</text>
+  <line x1="500" y1="882" x2="500" y2="906" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- trap signals -->
+  <rect x="260" y="906" width="480" height="52" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="929" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2937">/init: register shutdown handler</text>
+  <text x="500" y="946" text-anchor="middle" font-size="10" font-family="Consolas, monospace" fill="#1d4ed8">trap "poweroff -f" SIGTERM SIGPWR</text>
+  <line x1="740" y1="932" x2="770" y2="932" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="500" y1="958" x2="500" y2="982" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- side note -->
+  <rect x="770" y="900" width="210" height="70" rx="9" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="875" y="920" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1f2937">On SIGTERM / SIGPWR</text>
+  <text x="875" y="936" text-anchor="middle" font-size="10" fill="#374151">poweroff -f runs</text>
+  <text x="875" y="951" text-anchor="middle" font-size="10" fill="#374151">system halts cleanly</text>
+  <text x="875" y="965" text-anchor="middle" font-size="9" fill="#6b7280">(e.g. QEMU Ctrl+A X)</text>
+
+  <!-- exec /bin/sh -->
+  <rect x="260" y="982" width="480" height="52" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="1012" text-anchor="middle" font-size="13" font-family="Consolas, monospace" font-weight="600" fill="#1f2937">/init: exec /bin/sh</text>
+  <line x1="500" y1="1034" x2="500" y2="1058" stroke="#475569" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- END -->
+  <rect x="220" y="1058" width="560" height="62" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="3"/>
+  <text x="500" y="1084" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Interactive BusyBox Shell (PID 1 replaced)</text>
+  <text x="500" y="1103" text-anchor="middle" font-size="11" fill="#1d4ed8">ACTIVE end-state today</text>
+
+  <line x1="500" y1="1120" x2="500" y2="1150" stroke="#475569" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow2)"/>
+
+  <!-- Planned continuation -->
+  <rect x="150" y="1150" width="700" height="72" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="500" y="1172" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">PLANNED continuation (once system/init is implemented)</text>
+  <text x="500" y="1190" text-anchor="middle" font-size="10.5" fill="#374151">InitManager takes over → MountManager verifies mounts →</text>
+  <text x="500" y="1206" text-anchor="middle" font-size="10.5" fill="#374151">ServiceManager starts services → launches Shell / GUI</text>
+
+  <!-- Legend -->
+  <line x1="40" y1="1256" x2="960" y2="1256" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="1272" width="28" height="18" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="76" y="1285" font-size="11.5" fill="#1f2937">Implemented &amp; active today</text>
+
+  <rect x="500" y="1272" width="28" height="18" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="536" y="1285" font-size="11.5" fill="#1f2937">Planned / not yet implemented</text>
+
+  <rect x="40" y="1306" width="28" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="76" y="1319" font-size="11.5" fill="#1f2937">Upstream Linux kernel behavior</text>
+
+  <rect x="500" y="1306" width="28" height="18" rx="4" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="536" y="1319" font-size="11.5" fill="#1f2937">Informational side note</text>
+
+  <text x="500" y="1370" text-anchor="middle" font-size="10.5" fill="#94a3b8">Neytra OS · docs/diagrams/boot-sequence.svg</text>
+</svg>

@@ -1,3 +1,6 @@
-# Placeholder inittab for Bharat OS
+# inittab for Neytra OS
+# NOTE: not currently read — PID 1 is rootfs/init (a plain shell script), not
+# the BusyBox `init` applet. This file only takes effect if the kernel cmdline
+# is switched to init=/sbin/init (BusyBox init) in a future revision.
 ::sysinit:/etc/init.d/rcS
 ::respawn:/bin/sh

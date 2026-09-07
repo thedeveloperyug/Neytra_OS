@@ -1,0 +1,138 @@
+<svg viewBox="0 0 1000 1030" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="1030" fill="#ffffff"/>
+
+  <text x="500" y="28" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Neytra OS — Layered System Architecture</text>
+  <text x="500" y="48" text-anchor="middle" font-size="12.5" fill="#64748b">Bottom-up view of the software stack · state as verified in the repository on 2026-09-07</text>
+
+  <!-- flow indicator -->
+  <line x1="16" y1="72" x2="16" y2="868" stroke="#94a3b8" stroke-width="2" stroke-dasharray="2,4" marker-end="url(#arrow)"/>
+  <text x="16" y="884" text-anchor="middle" font-size="9.5" fill="#94a3b8">runs on</text>
+
+  <!-- Row 1: Applications -->
+  <rect x="40" y="72" width="920" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="500" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Applications — apps/</text>
+  <text x="500" y="118" text-anchor="middle" font-size="11.5" fill="#374151">terminal · editor · calculator · monitor · settings</text>
+  <text x="500" y="136" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">PLANNED — folders scaffolded with .gitkeep only</text>
+
+  <!-- Row 2: GUI -->
+  <rect x="40" y="162" width="920" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="500" y="188" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">GUI Layer — system/gui/</text>
+  <text x="500" y="208" text-anchor="middle" font-size="11.5" fill="#374151">WindowManager · Desktop · Renderer · Framebuffer</text>
+  <text x="500" y="226" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">PLANNED — empty class stubs, no rendering logic yet</text>
+
+  <!-- Row 3: System Services (5 boxes) -->
+  <g font-size="9">
+    <!-- Process -->
+    <rect x="40" y="252" width="176" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="128" y="272" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Process</text>
+    <text x="128" y="286" text-anchor="middle" fill="#374151">ProcessManager</text>
+    <text x="128" y="298" text-anchor="middle" fill="#374151">Scheduler · IPC</text>
+    <text x="128" y="313" text-anchor="middle" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Network -->
+    <rect x="226" y="252" width="176" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="314" y="272" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Network</text>
+    <text x="314" y="286" text-anchor="middle" fill="#374151">NetworkManager</text>
+    <text x="314" y="298" text-anchor="middle" fill="#374151">DHCP · WiFi · Socket</text>
+    <text x="314" y="313" text-anchor="middle" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Package -->
+    <rect x="412" y="252" width="176" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="500" y="272" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Package</text>
+    <text x="500" y="286" text-anchor="middle" fill="#374151">PackageManager</text>
+    <text x="500" y="298" text-anchor="middle" fill="#374151">Downloader · Installer · Repo</text>
+    <text x="500" y="313" text-anchor="middle" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Security -->
+    <rect x="598" y="252" width="176" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="686" y="272" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Security</text>
+    <text x="686" y="286" text-anchor="middle" fill="#374151">UserManager</text>
+    <text x="686" y="298" text-anchor="middle" fill="#374151">Permission · Sandbox</text>
+    <text x="686" y="313" text-anchor="middle" font-style="italic" fill="#92400e">planned</text>
+
+    <!-- Logger -->
+    <rect x="784" y="252" width="176" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="872" y="272" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f2937">Logger</text>
+    <text x="872" y="286" text-anchor="middle" fill="#374151">system/logger/</text>
+    <text x="872" y="298" text-anchor="middle" fill="#374151">Logger.hpp / .cpp</text>
+    <text x="872" y="313" text-anchor="middle" font-style="italic" fill="#92400e">planned</text>
+  </g>
+
+  <!-- Row 4: Shell -->
+  <rect x="40" y="342" width="452" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="266" y="368" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">BusyBox /bin/sh</text>
+  <text x="266" y="387" text-anchor="middle" font-size="11.5" fill="#374151">Interactive shell — ACTIVE today</text>
+  <text x="266" y="404" text-anchor="middle" font-size="9.5" fill="#1d4ed8">reached via rootfs/init → exec /bin/sh</text>
+
+  <rect x="508" y="342" width="452" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="368" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">system/shell/</text>
+  <text x="734" y="387" text-anchor="middle" font-size="11.5" fill="#374151">Shell · CommandParser · BuiltinCommands</text>
+  <text x="734" y="404" text-anchor="middle" font-size="9.5" font-style="italic" fill="#92400e">PLANNED — stub classes only, no logic</text>
+
+  <!-- Row 5: Init -->
+  <rect x="40" y="432" width="452" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="266" y="458" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">rootfs/init (POSIX sh)</text>
+  <text x="266" y="477" text-anchor="middle" font-size="11.5" fill="#374151">Runs as PID 1 — ACTIVE today</text>
+  <text x="266" y="494" text-anchor="middle" font-size="9.5" fill="#1d4ed8">mounts proc/sys/dev, traps signals, execs sh</text>
+
+  <rect x="508" y="432" width="452" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="458" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">system/init/</text>
+  <text x="734" y="477" text-anchor="middle" font-size="11.5" fill="#374151">InitManager · MountManager · ServiceManager</text>
+  <text x="734" y="494" text-anchor="middle" font-size="9.5" font-style="italic" fill="#92400e">PLANNED — stub classes only, no logic</text>
+
+  <!-- Row 6: Initramfs -->
+  <rect x="40" y="522" width="920" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="547" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Initramfs / Root Filesystem — rootfs/</text>
+  <text x="500" y="566" text-anchor="middle" font-size="11.5" fill="#374151">BusyBox v1.36.1 (static) + applet symlinks, packaged via cpio + gzip</text>
+  <text x="500" y="583" text-anchor="middle" font-size="9.5" fill="#1d4ed8">→ output/initramfs.cpio.gz (loaded by QEMU / bootloader)</text>
+
+  <!-- Row 7: Kernel -->
+  <rect x="40" y="608" width="920" height="84" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="632" text-anchor="middle" font-size="15" font-weight="700" fill="#1f2937">Linux Kernel 7.1.0-rc3 "Baby Opossum Posse" — kernel/linux</text>
+  <text x="500" y="652" text-anchor="middle" font-size="11.5" fill="#374151">x86_64: bzImage + vmlinux BUILT (make defconfig &amp;&amp; make -j$(nproc))</text>
+  <text x="500" y="669" text-anchor="middle" font-size="10.5" fill="#15803d">arm64: kernel8.img present in boot/, but no .config / build script yet</text>
+
+  <!-- Row 8: Firmware -->
+  <rect x="40" y="706" width="452" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="266" y="732" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">QEMU Direct Kernel Boot</text>
+  <text x="266" y="751" text-anchor="middle" font-size="11" fill="#374151">-kernel bzImage -initrd initramfs.cpio.gz</text>
+  <text x="266" y="768" text-anchor="middle" font-size="9.5" fill="#1d4ed8">ACTIVE — scripts/run_qemu_x86.sh</text>
+
+  <rect x="508" y="706" width="452" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="732" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Raspberry Pi 4B Firmware</text>
+  <text x="734" y="751" text-anchor="middle" font-size="11" fill="#374151">GPU firmware reads config.txt + cmdline.txt</text>
+  <text x="734" y="768" text-anchor="middle" font-size="9.5" font-style="italic" fill="#92400e">PARTIAL — files present, flashing/boot untested</text>
+
+  <!-- Row 9: Hardware -->
+  <rect x="40" y="796" width="452" height="76" rx="10" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="266" y="822" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">x86_64 Host / QEMU VM</text>
+  <text x="266" y="841" text-anchor="middle" font-size="11" fill="#374151">512MB RAM · 2 vCPU · KVM accel</text>
+  <text x="266" y="858" text-anchor="middle" font-size="9.5" fill="#374151">ACTIVE — today's target</text>
+
+  <rect x="508" y="796" width="452" height="76" rx="10" fill="#e5e7eb" stroke="#4b5563" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="734" y="822" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Raspberry Pi 4B</text>
+  <text x="734" y="841" text-anchor="middle" font-size="11" fill="#374151">Broadcom BCM2711 · ARM64 (Cortex-A72)</text>
+  <text x="734" y="858" text-anchor="middle" font-size="9.5" fill="#374151">PLANNED — future target</text>
+
+  <!-- Legend -->
+  <line x1="40" y1="886" x2="960" y2="886" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="902" width="28" height="18" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="76" y="915" font-size="11.5" fill="#1f2937">Implemented &amp; active today</text>
+
+  <rect x="500" y="902" width="28" height="18" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="536" y="915" font-size="11.5" fill="#1f2937">Planned / scaffolded only (empty stub)</text>
+
+  <rect x="40" y="936" width="28" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="76" y="949" font-size="11.5" fill="#1f2937">Upstream Linux kernel (unmodified)</text>
+
+  <rect x="500" y="936" width="28" height="18" rx="4" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="536" y="949" font-size="11.5" fill="#1f2937">Physical or virtual hardware target</text>
+
+  <text x="500" y="1000" text-anchor="middle" font-size="10.5" fill="#94a3b8">Neytra OS · docs/diagrams/system-architecture.svg</text>
+</svg>

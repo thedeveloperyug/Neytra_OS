@@ -1,0 +1,108 @@
+<svg viewBox="0 0 940 1090" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="940" height="1090" fill="#ffffff"/>
+
+  <text x="470" y="28" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">rootfs/init — Execution Flow (PID 1)</text>
+  <text x="470" y="48" text-anchor="middle" font-size="12.5" fill="#64748b">Line-by-line flow of the current init script, plus where the planned C++ InitManager plugs in</text>
+
+  <!-- Start -->
+  <rect x="300" y="80" width="300" height="50" rx="25" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+  <text x="450" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">/init invoked by kernel — PID 1</text>
+  <line x1="450" y1="130" x2="450" y2="150" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <!-- mounts -->
+  <rect x="270" y="150" width="360" height="50" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="180" text-anchor="middle" font-size="12.5" font-family="Consolas, monospace" fill="#1f2937">mount -t proc proc /proc</text>
+  <line x1="450" y1="200" x2="450" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="270" y="220" width="360" height="50" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="250" text-anchor="middle" font-size="12.5" font-family="Consolas, monospace" fill="#1f2937">mount -t sysfs sysfs /sys</text>
+  <line x1="450" y1="270" x2="450" y2="290" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="270" y="290" width="360" height="50" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="320" text-anchor="middle" font-size="12.5" font-family="Consolas, monospace" fill="#1f2937">mount -t devtmpfs devtmpfs /dev</text>
+  <line x1="450" y1="340" x2="450" y2="360" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <!-- banner -->
+  <rect x="270" y="360" width="360" height="56" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="382" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2937">echo welcome banner (4 lines)</text>
+  <text x="450" y="399" text-anchor="middle" font-size="10" font-family="Consolas, monospace" fill="#1d4ed8">"Welcome to Neytra OS 2026"</text>
+  <line x1="450" y1="416" x2="450" y2="436" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <!-- trap -->
+  <rect x="270" y="436" width="360" height="56" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="458" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2937">register shutdown handler</text>
+  <text x="450" y="475" text-anchor="middle" font-size="9.5" font-family="Consolas, monospace" fill="#1d4ed8">trap "poweroff -f" SIGTERM SIGPWR</text>
+  <line x1="450" y1="492" x2="450" y2="522" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <!-- async signal branch -->
+  <line x1="630" y1="464" x2="695" y2="464" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow4)"/>
+  <rect x="700" y="436" width="175" height="56" rx="9" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" stroke-dasharray="5,4"/>
+  <text x="787" y="454" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1f2937">SIGTERM / SIGPWR</text>
+  <text x="787" y="468" text-anchor="middle" font-size="9.5" fill="#374151">received later</text>
+  <text x="787" y="482" text-anchor="middle" font-size="8.5" font-style="italic" fill="#6b7280">(async — any time after this)</text>
+  <line x1="787" y1="492" x2="787" y2="512" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow4)"/>
+  <rect x="700" y="512" width="175" height="50" rx="9" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+  <text x="787" y="533" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1f2937">poweroff -f runs</text>
+  <text x="787" y="549" text-anchor="middle" font-size="9.5" fill="#374151">system halts</text>
+
+  <!-- decision diamond -->
+  <polygon points="450,522 600,567 450,612 300,567" fill="#fff7ed" stroke="#334155" stroke-width="2"/>
+  <text x="450" y="558" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">system/init/</text>
+  <text x="450" y="571" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">InitManager</text>
+  <text x="450" y="584" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">implemented?</text>
+
+  <!-- No branch (today) -->
+  <line x1="300" y1="567" x2="220" y2="567" stroke="#1d4ed8" stroke-width="2"/>
+  <line x1="220" y1="567" x2="220" y2="650" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrow4)"/>
+  <text x="255" y="560" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">No (today)</text>
+
+  <rect x="90" y="650" width="260" height="50" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="220" y="680" text-anchor="middle" font-size="12.5" font-family="Consolas, monospace" fill="#1f2937">exec /bin/sh</text>
+  <line x1="220" y1="700" x2="220" y2="726" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="70" y="726" width="300" height="64" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="3"/>
+  <text x="220" y="752" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">Interactive BusyBox Shell</text>
+  <text x="220" y="769" text-anchor="middle" font-size="10.5" fill="#1d4ed8">(PID 1 image replaced) — ACTIVE</text>
+  <text x="220" y="784" text-anchor="middle" font-size="9" fill="#1d4ed8">this is where Neytra OS boots to today</text>
+
+  <!-- Yes branch (planned) -->
+  <line x1="600" y1="567" x2="690" y2="567" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <line x1="690" y1="567" x2="690" y2="650" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow4)"/>
+  <text x="655" y="560" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">Yes (planned)</text>
+
+  <rect x="540" y="650" width="300" height="50" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="690" y="680" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#1f2937">exec system/init (InitManager)</text>
+  <line x1="690" y1="700" x2="690" y2="722" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="540" y="722" width="300" height="46" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="690" y="750" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#1f2937">MountManager.verify()</text>
+  <line x1="690" y1="768" x2="690" y2="790" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="540" y="790" width="300" height="50" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="690" y="812" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#1f2937">ServiceManager.startAll()</text>
+  <text x="690" y="827" text-anchor="middle" font-size="9.5" fill="#92400e">reads etc/init.d/*</text>
+  <line x1="690" y1="840" x2="690" y2="862" stroke="#475569" stroke-width="2" marker-end="url(#arrow4)"/>
+
+  <rect x="540" y="862" width="300" height="64" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="3" stroke-dasharray="6,4"/>
+  <text x="690" y="888" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">Services + Shell/GUI Running</text>
+  <text x="690" y="905" text-anchor="middle" font-size="10.5" font-style="italic" fill="#92400e">PLANNED — not implemented yet</text>
+  <text x="690" y="919" text-anchor="middle" font-size="9" fill="#92400e">today all these classes are empty stubs</text>
+
+  <!-- legend -->
+  <line x1="40" y1="960" x2="900" y2="960" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="976" width="28" height="18" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="76" y="989" font-size="11.5" fill="#1f2937">Implemented &amp; active today</text>
+  <rect x="500" y="976" width="28" height="18" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="536" y="989" font-size="11.5" fill="#1f2937">Planned / not yet implemented</text>
+  <rect x="40" y="1010" width="28" height="18" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+  <text x="76" y="1023" font-size="11.5" fill="#1f2937">Asynchronous signal path</text>
+  <rect x="500" y="1010" width="28" height="18" rx="4" fill="#fff7ed" stroke="#334155" stroke-width="2"/>
+  <text x="536" y="1023" font-size="11.5" fill="#1f2937">Decision point</text>
+
+  <text x="470" y="1060" text-anchor="middle" font-size="10.5" fill="#94a3b8">Neytra OS · docs/diagrams/init-flow.svg</text>
+</svg>

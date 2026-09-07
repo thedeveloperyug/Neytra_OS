@@ -1,0 +1,45 @@
+<svg viewBox="0 0 940 923" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect x="0" y="0" width="940" height="923" fill="#ffffff"/>
+<text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/shell/ — Detailed Workflow</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned read-eval-print loop — not running yet; BusyBox /bin/sh fills this role today</text>
+<rect x="110" y="78" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Launched by InitManager</text>
+<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">system/shell/main.cpp: main_shell()</text>
+<text x="470" y="132" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">today: returns 0 immediately (stub)</text>
+<line x1="470" y1="143" x2="470" y2="183" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="183" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. Shell::run() starts the REPL loop</text>
+<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">prints a prompt, e.g. "neytra&gt; "</text>
+<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="272" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Read a line of input</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">std::getline(std::cin, line)</text>
+<line x1="470" y1="321" x2="470" y2="361" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="361" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. CommandParser::parse(line)</text>
+<text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">tokenizes into { command, args[] }</text>
+<line x1="470" y1="410" x2="470" y2="450" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="450" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Is it a builtin?</text>
+<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">BuiltinCommands::has(command)</text>
+<text x="470" y="504" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">decision point</text>
+<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="555" width="720" height="64" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Dispatch the command</text>
+<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">builtin  -&gt; BuiltinCommands::run(argv)   // cd, echo, exit, ...</text>
+<text x="470" y="607" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">external -&gt; fork()+exec() via a future ProcessManager</text>
+<line x1="470" y1="619" x2="470" y2="659" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="659" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="681" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. Print result / error</text>
+<text x="470" y="696" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">writes to stdout/stderr; errors also go through Logger</text>
+<line x1="470" y1="708" x2="470" y2="748" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="748" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="770" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">8. Loop back to the prompt</text>
+<text x="470" y="785" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">until BuiltinCommands::run("exit") is called</text>
+<text x="470" y="802" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">today: BusyBox /bin/sh fills this role — see rootfs/init</text>
+<line x1="110" y1="843" x2="830" y2="843" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="857" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="144" y="870" font-size="11" fill="#1f2937">Planned / stub only</text>
+<text x="470" y="913" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; shell-workflow.svg</text>
+</svg>

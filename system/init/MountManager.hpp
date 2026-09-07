@@ -1,5 +1,10 @@
-// MountManager.hpp - placeholder
-
+// MountManager.hpp - placeholder IMountManager implementation.
 #pragma once
 
-class MountManager {};
+#include "IMountManager.hpp"
+
+class MountManager : public IMountManager {
+public:
+    bool mountAll() override;
+};
+
