@@ -10,7 +10,7 @@ set -e
 cd "$(dirname "$0")"
 
 # Step 1: make sure the host has the tools this script depends on.
-for cmd in qemu-system-x86_64 cpio gzip; do
+for cmd in qemu-system-x86_64 cpio gzip cmake; do
     command -v "$cmd" >/dev/null 2>&1 || {
         echo "Missing required tool: $cmd (see dev_setup.md / dev_setup_env.sh)"
         exit 1
@@ -28,8 +28,11 @@ if [ ! -f "$KERNEL_IMAGE" ]; then
     exit 1
 fi
 
-# Step 3: build the rootfs skeleton + BusyBox symlinks and package the initramfs.
+# Step 3: build the system/ C++ layer (e.g. neytra-log) and install it into rootfs/.
+./scripts/build_system.sh
+
+# Step 4: build the rootfs skeleton + BusyBox symlinks and package the initramfs.
 ./scripts/build_rootfs.sh
 
-# Step 4: boot the kernel + initramfs in QEMU (Ctrl+A then X to exit).
+# Step 5: boot the kernel + initramfs in QEMU (Ctrl+A then X to exit).
 ./scripts/run_qemu_x86.sh

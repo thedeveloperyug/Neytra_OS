@@ -4,6 +4,13 @@ mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 mount -t devtmpfs devtmpfs /dev
 
+# Route boot events through the real Logger (system/logger/) instead of plain
+# echo — see scripts/build_system.sh for how neytra-log gets into rootfs/.
+export NEYTRA_LOG_FILE=/var/log/neytra.log
+LOG=/usr/bin/neytra-log
+[ -x "$LOG" ] || LOG=:
+$LOG info init "mounted proc, sysfs, devtmpfs"
+
 printf '\n'
 printf '\033[1;36m%s\033[0m\n' \
   ' _   _ ________     _________ _____               ____   _____ ' \
@@ -19,5 +26,7 @@ printf '\n'
 
 # Handle shutdown signals
 trap "poweroff -f" SIGTERM SIGPWR
+$LOG info init "shutdown handler registered (SIGTERM/SIGPWR -> poweroff -f)"
 
+$LOG info init "boot complete, handing off to shell"
 /bin/sh
