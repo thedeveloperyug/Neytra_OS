@@ -7,3 +7,7 @@ output/
 *.log
 kernel/
 build/
+# Compiled from system/ sources by scripts/build_system.sh — regenerate, don't commit
+# (unlike rootfs/bin/busybox, which is a prebuilt third-party binary with no source here).
+rootfs/usr/bin/neytra-log
+

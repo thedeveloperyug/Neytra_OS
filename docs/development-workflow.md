@@ -1,3 +1,4 @@
+
 # Development Workflow
 
 The day-to-day loop for working on Neytra OS: environment setup once, then a fast edit → build → boot cycle, plus where tests, debugging, and version control fit in.
@@ -26,6 +27,9 @@ Run this once per machine, not per session.
 git clone https://github.com/torvalds/linux.git kernel/linux
 cd kernel/linux && make defconfig && make -j$(nproc) && cd ../..
 
+# Every time you change system/ C++ sources (e.g. system/logger/):
+./scripts/build_system.sh          # cmake build + install neytra-log into rootfs/usr/bin/
+
 # Every time you change anything under rootfs/:
 ./scripts/build_rootfs.sh          # full: skeleton + busybox symlinks + package
 # — or, faster, if you only edited files already in rootfs/ —
@@ -53,25 +57,25 @@ cmake --build build -j$(nproc)
 cd build && ctest --output-on-failure
 ```
 
-Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.cpp`) and `neytra_init` (from `system/init/*.cpp`, linked against `neytra_logger`), plus their `logger_test`/`init_test` executables. As more of `system/` gains real logic (see [roadmap.md](roadmap.md)), add a matching `add_library`/`add_executable` to `CMakeLists.txt` and a `tests/<subsystem>/` smoke test following the same pattern (plain `main()`, no test framework, registered with `add_test()`) — and follow the interface + constructor-injection convention in [architecture.md](architecture.md#design-principles), not a copy of the old concrete-class stubs.
+Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.cpp`) and `neytra_init` (from `system/init/*.cpp`, linked against `neytra_logger`), plus their `logger_test`/`init_test` executables — and `neytra-log`, a statically-linked CLI (`system/logger/tools/neytra-log.cpp`) that `scripts/build_system.sh` installs into `rootfs/usr/bin/` so `rootfs/init` can log real boot events through `Logger` instead of `echo` (see [boot-process.md](boot-process.md)). As more of `system/` gains real logic (see [roadmap.md](roadmap.md)), add a matching `add_library`/`add_executable` to `CMakeLists.txt` and a `tests/<subsystem>/` smoke test following the same pattern (plain `main()`, no test framework, registered with `add_test()`) — and follow the interface + constructor-injection convention in [architecture.md](architecture.md#design-principles), not a copy of the old concrete-class stubs.
 
 `build/` is gitignored — safe to delete and reconfigure any time.
 
 ## 4. Script reference
 
-| Script | Status | What it does |
-|---|---|---|
-| [`build_rootfs.sh`](../scripts/build_rootfs.sh) | ✅ ACTIVE | Ensures `rootfs/` skeleton dirs exist, verifies/symlinks BusyBox applets, fixes permissions, packages `output/initramfs.cpio.gz` |
-| [`create_initramfs.sh`](../scripts/create_initramfs.sh) | ✅ ACTIVE | Repackages the current `rootfs/` tree into `output/initramfs.cpio.gz` only — no skeleton/symlink work |
-| [`run_qemu_x86.sh`](../scripts/run_qemu_x86.sh) | ✅ ACTIVE | Boots the built kernel + initramfs in QEMU (KVM-accelerated, serial console) |
-| [`setup_shutdown.sh`](../scripts/setup_shutdown.sh) | ✅ ACTIVE | Wires up `rootfs/sbin/{halt,reboot,poweroff}` as symlinks to `shutdown` and sets the executable bit |
-| [`build_kernel.sh`](../scripts/build_kernel.sh) | ⏳ PLACEHOLDER | Intended to automate `make defconfig && make -j$(nproc)` in `kernel/linux` — currently just echoes |
-| [`build_system.sh`](../scripts/build_system.sh) | ⏳ PLACEHOLDER | Intended to wrap `cmake -S . -B build && cmake --build build` for the growing `system/` build (CMakeLists.txt now builds `neytra_logger` + `neytra_init`; still needs wiring for the rest) |
-| [`clean.sh`](../scripts/clean.sh) | ⏳ PLACEHOLDER | Intended to clear `output/` and build artifacts |
-| [`create_image.sh`](../scripts/create_image.sh) | ⏳ PLACEHOLDER | Intended to assemble a flashable disk image for Raspberry Pi — see [raspberrypi.md](raspberrypi.md) |
-| [`flash_sd.sh`](../scripts/flash_sd.sh) | ⏳ PLACEHOLDER | Intended to write an image to a physical SD card — **treat with care**, this touches a real block device |
-| [`run_qemu_arm64.sh`](../scripts/run_qemu_arm64.sh) | ⏳ PLACEHOLDER | Intended for QEMU-based ARM64 testing — see the caveat in [qemu-setup.md](qemu-setup.md#raspberry-pi--arm64-in-qemu) |
-| [`setup_env.sh`](../scripts/setup_env.sh) | ⏳ PLACEHOLDER | Overlaps with `dev_setup_env.sh` at the repo root; not yet differentiated |
+| Script                                                   | Status         | What it does                                                                                                                        |
+| -------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [`build_rootfs.sh`](../scripts/build_rootfs.sh)         | ✅ ACTIVE      | Ensures`rootfs/` skeleton dirs exist, verifies/symlinks BusyBox applets, fixes permissions, packages `output/initramfs.cpio.gz` |
+| [`create_initramfs.sh`](../scripts/create_initramfs.sh) | ✅ ACTIVE      | Repackages the current`rootfs/` tree into `output/initramfs.cpio.gz` only — no skeleton/symlink work                           |
+| [`run_qemu_x86.sh`](../scripts/run_qemu_x86.sh)         | ✅ ACTIVE      | Boots the built kernel + initramfs in QEMU (KVM-accelerated, serial console)                                                        |
+| [`setup_shutdown.sh`](../scripts/setup_shutdown.sh)     | ✅ ACTIVE      | Wires up`rootfs/sbin/{halt,reboot,poweroff}` as symlinks to `shutdown` and sets the executable bit                              |
+| [`build_kernel.sh`](../scripts/build_kernel.sh)         | ⏳ PLACEHOLDER | Intended to automate`make defconfig && make -j$(nproc)` in `kernel/linux` — currently just echoes                              |
+| [`build_system.sh`](../scripts/build_system.sh)         | ✅ ACTIVE      | Configures/builds the CMake`system/` targets and installs `neytra-log` into `rootfs/usr/bin/`                                 |
+| [`clean.sh`](../scripts/clean.sh)                       | ⏳ PLACEHOLDER | Intended to clear`output/` and build artifacts                                                                                    |
+| [`create_image.sh`](../scripts/create_image.sh)         | ⏳ PLACEHOLDER | Intended to assemble a flashable disk image for Raspberry Pi — see[raspberrypi.md](raspberrypi.md)                                  |
+| [`flash_sd.sh`](../scripts/flash_sd.sh)                 | ⏳ PLACEHOLDER | Intended to write an image to a physical SD card —**treat with care**, this touches a real block device                      |
+| [`run_qemu_arm64.sh`](../scripts/run_qemu_arm64.sh)     | ⏳ PLACEHOLDER | Intended for QEMU-based ARM64 testing — see the caveat in[qemu-setup.md](qemu-setup.md#raspberry-pi--arm64-in-qemu)                 |
+| [`setup_env.sh`](../scripts/setup_env.sh)               | ⏳ PLACEHOLDER | Overlaps with`dev_setup_env.sh` at the repo root; not yet differentiated                                                          |
 
 ## 5. Debugging
 
@@ -119,7 +123,6 @@ Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.
   [system/init/design/init-workflow.svg](../system/init/design/init-workflow.svg) is the
   reference for a planned/stub one. Keep diagrams **in-detail** — numbered steps with
   actual (or intended) method names, not just a high-level box-and-arrow sketch.
-
 
 ## See also
 

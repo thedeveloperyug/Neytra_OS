@@ -31,15 +31,22 @@ mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 mount -t devtmpfs devtmpfs /dev
 
-echo ""
-echo "================================="
-echo " Welcome to Neytra OS 2026"
-echo "================================="
-echo ""
+export NEYTRA_LOG_FILE=/var/log/neytra.log
+LOG=/usr/bin/neytra-log
+[ -x "$LOG" ] || LOG=:
+$LOG info init "mounted proc, sysfs, devtmpfs"
+
+printf '\n'
+printf '\033[1;36m%s\033[0m\n' \
+  ... (big ASCII banner, see the file itself) ...
+printf '\033[1;33m              >> Neytra OS 2026 <<\033[0m\n'
+printf '\033[1;35m              Author: @thedeveloperyug\033[0m\n'
 
 # Handle shutdown signals
 trap "poweroff -f" SIGTERM SIGPWR
+$LOG info init "shutdown handler registered (SIGTERM/SIGPWR -> poweroff -f)"
 
+$LOG info init "boot complete, handing off to shell"
 /bin/sh
 ```
 
@@ -50,9 +57,14 @@ Step by step:
 | `mount -t proc proc /proc` | Mounts the process/kernel info pseudo-filesystem, required by tools like `ps` |
 | `mount -t sysfs sysfs /sys` | Mounts the kernel object/device tree, required by most system tools |
 | `mount -t devtmpfs devtmpfs /dev` | Ensures device nodes (`/dev/console`, `/dev/null`, etc.) are populated |
-| Banner `echo`s | Cosmetic — confirms init ran and reached this point |
+| `export NEYTRA_LOG_FILE=...` + `LOG=/usr/bin/neytra-log` | Points every subsequent `$LOG` call at the real [`system/logger/Logger`](../system/logger/README.md) (via the statically-linked `neytra-log` CLI — see [rootfs.md](rootfs.md)), so boot events are timestamped, leveled, and persisted, not just `echo`ed |
+| `[ -x "$LOG" ] || LOG=:` | Defensive fallback: if `neytra-log` isn't present (e.g. an older initramfs), `$LOG ...` becomes a harmless no-op (`:`) instead of failing |
+| `$LOG info init "..."` calls | Real, structured boot-event logging — each one prints a colored `[time] [INFO] [init] ...` line to the console *and* appends a plain-text copy to `/var/log/neytra.log` |
+| ASCII banner (`printf`) | Cosmetic — confirms init ran and reached this point |
 | `trap "poweroff -f" SIGTERM SIGPWR` | Registers an asynchronous handler: whenever PID 1 receives `SIGTERM` (normal shutdown request) or `SIGPWR` (power-fail, e.g. QEMU's ACPI shutdown signal), it force-executes `poweroff`. This can fire **at any point after this line**, independent of the rest of the script. |
 | `/bin/sh` | Hands off to an interactive BusyBox shell. Since this isn't `exec /bin/sh`, the shell runs as a *child* of `/init` (PID 1 stays alive as the parent) — see the note below. |
+
+This isn't theoretical — booting `./run.sh` and then running `cat /var/log/neytra.log` from the shell shows exactly these three log lines, timestamped from that boot.
 
 ![rootfs/init execution flow](diagrams/init-flow.svg)
 

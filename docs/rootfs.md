@@ -53,7 +53,7 @@ rootfs/sbin/halt, poweroff, reboot: symbolic link to shutdown
 
 ## `rootfs/init`
 
-The actual PID 1 program (a shell script). Fully covered in [boot-process.md](boot-process.md#3-init-stage--pid-1) — mounts `proc`/`sysfs`/`devtmpfs`, prints a banner, traps `SIGTERM`/`SIGPWR` for clean shutdown, then drops into a shell.
+The actual PID 1 program (a shell script). Fully covered in [boot-process.md](boot-process.md#3-init-stage--pid-1) — mounts `proc`/`sysfs`/`devtmpfs`, logs each step through the real [`Logger`](../system/logger/README.md) (via `/usr/bin/neytra-log`), prints a banner, traps `SIGTERM`/`SIGPWR` for clean shutdown, then drops into a shell.
 
 ## How the tree gets built and packaged
 
@@ -73,4 +73,6 @@ find . | cpio -H newc -o | gzip > ../output/initramfs.cpio.gz
 
 ## Standard FHS directories
 
-`proc/`, `sys/`, `dev/`, `tmp/`, `mnt/`, `media/`, `opt/`, `srv/`, `var/{log,run}/`, `usr/{bin,sbin,lib,include}/`, `home/root/`, and `lib/` are all present but empty at rest — `proc`, `sys`, and `dev` get populated by the kernel's mounts in `rootfs/init`; the rest are placeholders following the Filesystem Hierarchy Standard so that tools which expect them (e.g. anything doing `cd /tmp`) don't fail.
+`proc/`, `sys/`, `dev/`, `tmp/`, `mnt/`, `media/`, `opt/`, `srv/`, `var/{log,run}/`, `usr/{sbin,lib,include}/`, `home/root/`, and `lib/` are all present but empty at rest — `proc`, `sys`, and `dev` get populated by the kernel's mounts in `rootfs/init`; the rest are placeholders following the Filesystem Hierarchy Standard so that tools which expect them (e.g. anything doing `cd /tmp`) don't fail.
+
+`usr/bin/` is the one exception: [`scripts/build_system.sh`](../scripts/build_system.sh) installs the statically-linked `neytra-log` CLI there (built from [`system/logger/`](../system/logger/README.md)), which `rootfs/init` calls to log boot events through the real `Logger` — see [boot-process.md](boot-process.md). The binary itself is gitignored (rebuilt from source, not committed) — see [`.gitignore`](../.gitignore).
