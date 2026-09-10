@@ -1,29 +1,55 @@
 # Networking
 
-> **Status: PLANNED — not implemented.** Every file described below is currently a one-line placeholder (e.g. `// NetworkManager.cpp - placeholder`). This doc describes the architecture implied by the existing folder/class scaffolding under [system/network/](../system/network/), as a design reference for implementing it — not a description of working code.
+> **Status: IMPLEMENTED and wired into boot.** Every class below is a real
+> implementation — real BSD sockets, real interface enumeration, a real RFC 2131 DHCP
+> client that actually applies the lease it gets (IP/netmask + default route via new
+> `ioctl(SIOCSIFADDR/SIOCSIFNETMASK/SIOCADDRT)` calls), real sysfs Wi-Fi-interface
+> detection — built as `neytra_network` and covered by
+> [`tests/network/network_test.cpp`](../tests/network/network_test.cpp). `rootfs/init`
+> runs a small CLI, `neytra-netup`, in the background at every boot to bring `lo` and any
+> real interface up and DHCP it — verified end-to-end in QEMU (real lease, real
+> `ifconfig`-visible IP, real kernel routing table entry, real `ping` to the gateway). See
+> [system/network/README.md](../system/network/README.md) and
+> [system/README.md](../system/README.md) (which has the full verified transcript) for
+> current status; this doc is the deeper design discussion.
 
-## Why networking is deferred
+## Why networking came after the boot loop
 
-The root [README.md](../README.md)'s "Development Strategy" explicitly says *not* to start with networking — it's Phase 8+ in [roadmap.md](roadmap.md), after the kernel/rootfs/init/shell/QEMU loop (done) and the core C++ `system/init` + `system/shell` layers (in progress). See [architecture.md](architecture.md) for the full layering.
+The root [README.md](../README.md)'s "Development Strategy" explicitly says *not* to
+start with networking until the kernel/rootfs/init/shell/QEMU loop is solid — see
+[roadmap.md](roadmap.md) for where this landed once that was done. See
+[architecture.md](architecture.md) for the full layering.
 
-## Scaffolded classes
+## Classes
 
-| Class | File | Inferred responsibility |
+| Class | File | Real responsibility |
 |---|---|---|
-| `NetworkManager` | [system/network/NetworkManager.cpp](../system/network/NetworkManager.cpp) | Top-level coordinator: brings interfaces up/down, owns the other three classes |
-| `DHCPClient` | [system/network/DHCPClient.cpp](../system/network/DHCPClient.cpp) | DHCP lease acquisition/renewal for an interface |
-| `WifiManager` | [system/network/WifiManager.cpp](../system/network/WifiManager.cpp) | Wi-Fi scanning/association (relevant mainly for the Raspberry Pi target) |
-| `SocketManager` | [system/network/SocketManager.cpp](../system/network/SocketManager.cpp) | Socket lifecycle helper, likely underpinning both `NetworkManager` and higher layers like `system/package/Downloader` |
+| `NetworkManager` | [system/network/NetworkManager.cpp](../system/network/NetworkManager.cpp) | Real `getifaddrs()`-based interface enumeration; brings interfaces up/down via `ioctl(SIOCSIFFLAGS)`; assigns an IPv4 address/netmask via `ioctl(SIOCSIFADDR/SIOCSIFNETMASK)`; installs a default route via `ioctl(SIOCADDRT)` (all need `CAP_NET_ADMIN`) |
+| `DHCPClient` | [system/network/DHCPClient.cpp](../system/network/DHCPClient.cpp) | Real DHCP lease acquisition: hand-built BOOTP/DHCP packets, full DISCOVER→OFFER→REQUEST→ACK exchange over raw UDP broadcast (needs root to bind port 68) |
+| `WifiManager` | [system/network/WifiManager.cpp](../system/network/WifiManager.cpp) | Real sysfs-based wireless-interface detection; `scan()` is an honest no-op — full nl80211 support is out of scope without real wireless hardware to test against |
+| `SocketManager` | [system/network/SocketManager.cpp](../system/network/SocketManager.cpp) | Real BSD socket wrapper (`socket`/`bind`/`connect`/`send`/`recv`), also used directly by [`system/package/Downloader`](../system/package/Downloader.cpp) |
 
-## Proposed relationship to the rest of the system
+## Relationship to the rest of the system
 
-Per the [subsystem map](diagrams/subsystem-map.svg), `NetworkManager` would be started by `system/init/ServiceManager` alongside the other subsystems, and would need `rootfs/etc/network/` (currently empty — see [rootfs.md](rootfs.md)) as its configuration source, plus `configs/network/` (also currently empty — see [project-structure.md](project-structure.md)) for versioned defaults.
+[`system/network/tools/neytra-netup.cpp`](../system/network/tools/neytra-netup.cpp) is the
+real composition root: `rootfs/init` launches it in the background at every boot (see
+[system/README.md](../system/README.md) for a full verified transcript). It brings `lo`
+and any other real interface up, waits for carrier, DHCPs it, and applies the lease —
+the first `system/network/` code to run automatically, not just via `neytra-diag`. It
+doesn't go through `system/init/ServiceManager` (that still only spawns opaque commands
+from a config file, not `NetworkManager` directly) — it's `rootfs/init` calling a small
+statically-linked CLI, the same pattern as `neytra-log`. It would need
+`rootfs/etc/network/` (currently empty — see [rootfs.md](rootfs.md)) as a real
+configuration source (e.g. static IP instead of always-DHCP) plus `configs/network/`
+(also currently empty — see [project-structure.md](project-structure.md)) for versioned
+defaults — neither schema is defined yet, so DHCP-or-nothing is the only mode today.
 
-## Design considerations for implementation (not yet decided)
+## Known limitations (deliberate, not bugs)
 
-- BusyBox already provides basic networking applets (`ifconfig`, `route`, etc. — check `rootfs/bin/busybox --list` on a built system for what's compiled in) which could be a stopgap before `NetworkManager` exists.
-- `DHCPClient` will need raw socket or `netlink` access — this has security implications; see the planned `system/security/Sandbox` and `PermissionManager` for how privileged operations might eventually be gated.
-- Nothing in `rootfs/etc/network/` or `configs/network/` defines a schema yet — that's a prerequisite design decision before writing `NetworkManager`.
+- BusyBox already provides basic networking applets (`ifconfig`, `route`, etc. — check `rootfs/bin/busybox --list`, or just call e.g. `busybox ifconfig` directly even without a symlink) — useful for independently verifying what `neytra-netup` configured.
+- `WifiManager::scan()` returns an empty list always — see [system/network/README.md](../system/network/README.md) for why.
+- No caller currently consults `system/security/PermissionManager` before performing privileged network operations — the two modules exist independently today.
+- Nothing in `rootfs/etc/network/` or `configs/network/` defines a schema yet.
 
 ## See also
 

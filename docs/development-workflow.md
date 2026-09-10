@@ -57,7 +57,7 @@ cmake --build build -j$(nproc)
 cd build && ctest --output-on-failure
 ```
 
-Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.cpp`) and `neytra_init` (from `system/init/*.cpp`, linked against `neytra_logger`), plus their `logger_test`/`init_test` executables — and `neytra-log`, a statically-linked CLI (`system/logger/tools/neytra-log.cpp`) that `scripts/build_system.sh` installs into `rootfs/usr/bin/` so `rootfs/init` can log real boot events through `Logger` instead of `echo` (see [boot-process.md](boot-process.md)). As more of `system/` gains real logic (see [roadmap.md](roadmap.md)), add a matching `add_library`/`add_executable` to `CMakeLists.txt` and a `tests/<subsystem>/` smoke test following the same pattern (plain `main()`, no test framework, registered with `add_test()`) — and follow the interface + constructor-injection convention in [architecture.md](architecture.md#design-principles), not a copy of the old concrete-class stubs.
+Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.cpp`) and `neytra_init` (from `system/init/*.cpp`, linked against `neytra_logger`), plus their `logger_test`/`init_test` executables — and `neytra-log`, a statically-linked CLI (`system/logger/tools/neytra-log.cpp`) that `scripts/build_system.sh` installs into `rootfs/usr/bin/` so `rootfs/init` can log real boot events through `Logger` instead of `echo` (see [boot-process.md](boot-process.md)). As more of `system/` gains real logic (see [roadmap.md](roadmap.md)), add a matching `add_library`/`add_executable` to `CMakeLists.txt` and a `tests/<subsystem>/` GoogleTest suite following the same pattern (see section 6 below) — and follow the interface + constructor-injection convention in [architecture.md](architecture.md#design-principles), not a copy of the old concrete-class stubs.
 
 `build/` is gitignored — safe to delete and reconfigure any time.
 
@@ -86,7 +86,59 @@ Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.
 
 ## 6. Testing
 
-[`tests/{kernel,network,shell}/`](../tests/) still contain only `.gitkeep`. [`tests/logger/logger_test.cpp`](../tests/logger/logger_test.cpp) and [`tests/init/init_test.cpp`](../tests/init/init_test.cpp) are the first real tests — plain-`main()` smoke tests (no framework dependency) registered with CTest via `add_test()` in `CMakeLists.txt`; run them with `cd build && ctest --output-on-failure`. Follow this same pattern (one plain executable per subsystem, no test framework) as each `system/` subsystem gains real logic.
+Every implemented `system/` module has a matching `tests/<subsystem>/*_test.cpp` suite:
+`logger`, `init`, `security`, `process`, `shell`, `network`, `package`, `drivers` — 8 in
+total, all passing. `tests/kernel/` is still an empty `.gitkeep` placeholder (there's no
+custom kernel code to unit-test yet).
+
+Suites use **GoogleTest** (`libgtest-dev`/`libgmock-dev`, installed via `apt`; located by
+CMake's `find_package(GTest REQUIRED)`), not plain `main()`/`assert`. Convention for a new
+suite:
+
+```cpp
+#include <gtest/gtest.h>
+
+TEST(SomeClassTest, DoesSomethingSpecific) {
+    SomeClass instance(log);
+    EXPECT_EQ(instance.doThing(), expectedValue);
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    Logger::instance().setMinLevel(LogLevel::Error);  // quiet unless something's wrong
+    return RUN_ALL_TESTS();
+}
+```
+
+- One `TEST(Suite, Case)` per independently-checkable behavior (not one giant `main()`
+  flow) — see [tests/security/security_test.cpp](../tests/security/security_test.cpp)
+  for an example splitting `UserManagerTest`/`PermissionManagerTest`/`SandboxTest` apart.
+- Write your own `main()` calling `::testing::InitGoogleTest` + `RUN_ALL_TESTS()` instead
+  of linking `GTest::gtest_main`, whenever the suite needs one-time setup (e.g. quieting
+  the shared `Logger` singleton) before any test runs.
+- Use `ASSERT_*` for a precondition that would make the rest of the test meaningless or
+  crash (e.g. a negative fd/pid), `EXPECT_*` for everything else so one failure doesn't
+  hide the next.
+- Use `GTEST_SKIP() << "reason"` for environment-dependent cases instead of silently
+  passing — see [tests/init/init_test.cpp](../tests/init/init_test.cpp) for an example
+  (skips the strict mount-success assertion when not running as root).
+- **Use a `TEST_F` fixture (`SetUp()`/`TearDown()`) whenever a test manages a real
+  external resource** — a temp file/dir, a raw fd, a forked process, redirected stdin,
+  mutated OS scheduling state — so cleanup runs even if an earlier `ASSERT_*` aborts the
+  test body partway through. Don't bother with a fixture for tests that only construct a
+  stack object and call a pure function (e.g. `CommandParserTest`, `PermissionManagerTest`)
+  — there's nothing to tear down, so a fixture there is just ceremony. And don't use a
+  fixture to "clean up" something already covered by RAII (e.g. `UART`'s destructor
+  already closes its own fd) — fixtures are for state that ISN'T tied to a local object's
+  lifetime. See [tests/package/package_test.cpp](../tests/package/package_test.cpp)'s
+  `PackageManagerTest` for the fullest example (temp files, a forked HTTP server killed +
+  reaped in `TearDown()`, recursive cleanup via `std::filesystem::remove_all` with a local
+  `std::error_code` so it never throws).
+- In `CMakeLists.txt`, link `GTest::gtest` (not `GTest::gtest_main`) and register with
+  `add_test(NAME <name>_test COMMAND <name>_test)`, same as the other 8 suites.
+
+Run everything with `cd build && ctest --output-on-failure`, or run a suite's binary
+directly (e.g. `./build/security_test`) for GoogleTest's own colored, per-`TEST` output.
 
 ## 7. Version control notes
 
@@ -109,8 +161,8 @@ Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.
   role, a detailed architecture diagram, a file-by-file responsibility table, and
   implementation status/technical notes (see
   [system/logger/README.md](../system/logger/README.md) for the reference example of an
-  implemented module, or [system/init/README.md](../system/init/README.md) for a stub
-  one). **Add one whenever a new module is created, and update it when a module's status
+  implemented module, or [system/gui/README.md](../system/gui/README.md) for the one
+  remaining stub). **Add one whenever a new module is created, and update it when a module's status
   changes** (e.g. stub → implemented) — don't let it go stale the way the top-level docs
   once did.
 - **Every `system/<module>/` directory also has a `design/<module>-workflow.svg`** — a
@@ -120,8 +172,8 @@ Today this builds two real targets: `neytra_logger` (from `system/logger/Logger.
   implemented, dashed amber = planned/stub, green = kernel/OS-provided, gray = external or
   hardware. [system/logger/design/logger-workflow.svg](../system/logger/design/logger-workflow.svg)
   is the reference example for an implemented module (traces the real call path);
-  [system/init/design/init-workflow.svg](../system/init/design/init-workflow.svg) is the
-  reference for a planned/stub one. Keep diagrams **in-detail** — numbered steps with
+  [system/gui/design/gui-workflow.svg](../system/gui/design/gui-workflow.svg) is the
+  reference for the one remaining planned/stub module. Keep diagrams **in-detail** — numbered steps with
   actual (or intended) method names, not just a high-level box-and-arrow sketch.
 
 ## See also

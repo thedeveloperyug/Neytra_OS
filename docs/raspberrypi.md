@@ -34,7 +34,7 @@ Before attempting a real Pi boot, decide which model you want and make `cmdline.
 
 - No `.config` for an arm64 kernel build (`configs/kernel/` is empty — see [project-structure.md](project-structure.md)).
 - [`scripts/build_kernel.sh`](../scripts/build_kernel.sh), [`scripts/create_image.sh`](../scripts/create_image.sh), [`scripts/flash_sd.sh`](../scripts/flash_sd.sh), and [`scripts/run_qemu_arm64.sh`](../scripts/run_qemu_arm64.sh) are all still placeholders (`echo "... placeholder"`).
-- [`system/drivers/`](../system/drivers/) (`GPIO`, `I2C`, `SPI`, `UART`) — the classes that would let Neytra OS talk to Pi-specific hardware — are empty stubs (see [architecture.md](architecture.md)).
+- [`system/drivers/`](../system/drivers/) (`GPIO`, `I2C`, `SPI`, `UART`) — the classes that let Neytra OS talk to Pi-specific hardware — are now **implemented** (real sysfs GPIO, real `/dev/i2c-*`/`/dev/spidev*` ioctls, real UART termios) but only host-tested so far; `GPIO`/`I2C`/`SPI` need a real Pi to prove out since the x86_64/QEMU target has none of that hardware (see [architecture.md](architecture.md) and [system/drivers/README.md](../system/drivers/README.md)).
 - [`toolchain/cross/`](../toolchain/cross/), `toolchain/gcc/`, `toolchain/sysroot/` — reserved for the ARM64 cross-compiler, currently empty.
 
 ## Planned path to a real boot

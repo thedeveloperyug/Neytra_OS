@@ -1,54 +1,52 @@
-<svg viewBox="0 0 940 1060" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<svg viewBox="0 0 940 1025" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
-<rect x="0" y="0" width="940" height="1060" fill="#ffffff"/>
+<rect x="0" y="0" width="940" height="1025" fill="#ffffff"/>
 <text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/init/ — Detailed Workflow</text>
-<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned PID 1 handoff sequence — not running yet; rootfs/init (shell script) is what boots today</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Implemented (host-tested) but not yet wired into the real boot path — rootfs/init still runs at boot</text>
 <rect x="110" y="78" width="720" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
 <text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Kernel executes /init</text>
 <text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">kernel cmdline: init=/init  (see docs/boot-process.md)</text>
 <text x="470" y="132" text-anchor="middle" font-size="10" font-style="italic" fill="#15803d">real today — but /init currently means rootfs/init, not this module</text>
 <line x1="470" y1="143" x2="470" y2="183" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="183" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. main_init() entry point</text>
-<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">system/init/main.cpp</text>
-<text x="470" y="237" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">today: returns 0 immediately (stub)</text>
-<line x1="470" y1="248" x2="470" y2="288" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="288" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="310" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Construct InitManager</text>
-<text x="470" y="325" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">top-level orchestrator for the whole boot handoff</text>
-<line x1="470" y1="337" x2="470" y2="377" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="377" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="399" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. InitManager.mountAll()</text>
-<text x="470" y="414" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">delegates to MountManager</text>
-<line x1="470" y1="426" x2="470" y2="466" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="466" width="720" height="80" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="488" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. MountManager mounts filesystems</text>
-<text x="470" y="503" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">mount("proc", "/proc", ...); mount("sysfs", "/sys", ...);</text>
-<text x="470" y="518" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">mount("devtmpfs", "/dev", ...);</text>
-<text x="470" y="535" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">replaces rootfs/init's 3 mount calls</text>
-<line x1="470" y1="546" x2="470" y2="586" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="586" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="608" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Log boot banner</text>
-<text x="470" y="623" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">via system/logger/Logger (already implemented)</text>
-<text x="470" y="640" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">replaces rootfs/init's printf banner</text>
-<line x1="470" y1="651" x2="470" y2="691" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="691" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="713" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. InitManager.startServices()</text>
-<text x="470" y="728" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">delegates to ServiceManager</text>
-<line x1="470" y1="740" x2="470" y2="780" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="780" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="802" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">8. ServiceManager starts services</text>
-<text x="470" y="817" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">reads etc/init.d/*, spawns each one</text>
-<text x="470" y="834" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">needs system/process/ProcessManager (also a stub)</text>
-<line x1="470" y1="845" x2="470" y2="885" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="885" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="907" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">9. Hand off to interactive shell</text>
-<text x="470" y="922" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">launches system/shell/Shell</text>
-<text x="470" y="939" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">today: rootfs/init execs /bin/sh (BusyBox) directly instead</text>
-<line x1="110" y1="980" x2="830" y2="980" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="110" y="994" width="26" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-<text x="144" y="1007" font-size="11" fill="#1f2937">Kernel / OS-provided</text>
-<rect x="470" y="994" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="504" y="1007" font-size="11" fill="#1f2937">Planned / stub only</text>
-<text x="470" y="1050" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; init-workflow.svg</text>
+<rect x="110" y="183" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. main_init() composition root</text>
+<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">constructs MountManager, ProcessManager, ServiceManager</text>
+<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="272" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Construct InitManager</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">injects IMountManager&amp;, IServiceManager&amp;, ILogger&amp; via constructor</text>
+<line x1="470" y1="321" x2="470" y2="361" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="361" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. InitManager::run()</text>
+<text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">calls mountManager_.mountAll(), then serviceManager_.startAll()</text>
+<line x1="470" y1="410" x2="470" y2="450" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="450" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. MountManager::mountAll()</text>
+<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">real mount(2): proc -&gt; /proc, sysfs -&gt; /sys, devtmpfs -&gt; /dev</text>
+<text x="470" y="504" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">configurable MountSpec list; tests use a safe temp tmpfs, not real paths</text>
+<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="555" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Log each mount via ILogger</text>
+<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">system/logger/Logger (implemented) — not a raw printf</text>
+<line x1="470" y1="604" x2="470" y2="644" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="644" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="666" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. ServiceManager::startAll()</text>
+<text x="470" y="681" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">parses name|command|args config, spawns each via IProcessManager</text>
+<line x1="470" y1="693" x2="470" y2="733" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="733" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="755" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">8. ProcessManager::spawn()</text>
+<text x="470" y="770" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">real fork() + execvp() per configured service</text>
+<line x1="470" y1="782" x2="470" y2="822" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="822" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="844" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">9. Hand off to interactive shell</text>
+<text x="470" y="859" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">would launch system/shell/Shell (implemented, not wired in yet)</text>
+<text x="470" y="876" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">today: rootfs/init execs /bin/sh (BusyBox) directly instead</text>
+<line x1="110" y1="917" x2="830" y2="917" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="931" width="26" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="144" y="944" font-size="11" fill="#1f2937">Kernel / OS-provided</text>
+<rect x="470" y="931" width="26" height="16" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="504" y="944" font-size="11" fill="#1f2937">Implemented &amp; active</text>
+<rect x="110" y="959" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="144" y="972" font-size="11" fill="#1f2937">Planned / stub only</text>
+<text x="470" y="1015" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; init-workflow.svg</text>
 </svg>

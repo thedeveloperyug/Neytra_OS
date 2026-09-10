@@ -29,9 +29,10 @@ Raspberry Pi boot-partition files: `config.txt`, `cmdline.txt`, `kernel8.img`, `
 
 The tree packaged into the initramfs: `bin/` (BusyBox + symlinks), `sbin/` (shutdown + symlinks), `etc/` (inittab, hostname, motd, init.d/, network/), `init` (PID 1 script), plus standard empty FHS directories (`proc/`, `sys/`, `dev/`, `tmp/`, `usr/`, `var/`, `home/`, `mnt/`, `media/`, `opt/`, `srv/`, `lib/`). Fully documented in [rootfs.md](rootfs.md).
 
-## `system/` — the planned C++ layer
+## `system/` — the C++ system layer
 
-All currently empty class stubs (see [architecture.md](architecture.md) for the full map):
+Real, host-tested implementations behind interfaces for every module except the GUI (see
+[architecture.md](architecture.md) for the full map and status of what's wired into boot):
 
 Every folder below also has its own `README.md` (role, detailed SVG workflow diagram in
 `design/`, file responsibilities, status) — see
@@ -40,15 +41,15 @@ for the convention.
 
 | Folder | Files |
 |---|---|
-| `system/init/` | `IInitManager.hpp`, `InitManager.*`, `IMountManager.hpp`, `MountManager.*`, `IServiceManager.hpp`, `ServiceManager.*`, `main.cpp`, `README.md`, `design/init-workflow.svg` — 🚧 interface + DI skeleton implemented (built as `neytra_init`) |
-| `system/logger/` | `ILogger.hpp`, `Logger.hpp`, `Logger.cpp`, `README.md`, `design/logger-workflow.svg` — ✅ implemented (built as `neytra_logger`) |
-| `system/shell/` | `Shell.*`, `CommandParser.*`, `BuiltinCommands.*`, `main.cpp`, `README.md`, `design/shell-workflow.svg` |
-| `system/process/` | `ProcessManager.cpp`, `Scheduler.cpp`, `IPC.cpp`, `README.md`, `design/process-workflow.svg` |
-| `system/network/` | `NetworkManager.cpp`, `DHCPClient.cpp`, `WifiManager.cpp`, `SocketManager.cpp`, `README.md`, `design/network-workflow.svg` |
-| `system/package/` | `PackageManager.cpp`, `Downloader.cpp`, `Installer.cpp`, `Repository.cpp`, `README.md`, `design/package-workflow.svg` |
-| `system/security/` | `UserManager.cpp`, `PermissionManager.cpp`, `Sandbox.cpp`, `README.md`, `design/security-workflow.svg` |
-| `system/drivers/` | `GPIO.cpp`, `I2C.cpp`, `SPI.cpp`, `UART.cpp`, `README.md`, `design/drivers-workflow.svg` |
-| `system/gui/` | `WindowManager.cpp`, `Desktop.cpp`, `Renderer.cpp`, `Framebuffer.cpp`, `README.md`, `design/gui-workflow.svg` |
+| `system/init/` | `IInitManager.hpp`, `InitManager.*`, `IMountManager.hpp`, `MountManager.*`, `IServiceManager.hpp`, `ServiceManager.*`, `main.cpp`, `README.md`, `design/init-workflow.svg` — ✅ implemented (built as `neytra_init`), not yet invoked at boot |
+| `system/logger/` | `ILogger.hpp`, `Logger.hpp`, `Logger.cpp`, `README.md`, `design/logger-workflow.svg` — ✅ implemented and **running at boot** (built as `neytra_logger`) |
+| `system/shell/` | `IShell.hpp`, `Shell.*`, `ICommandParser.hpp`, `CommandParser.*`, `IBuiltinCommands.hpp`, `BuiltinCommands.*`, `main.cpp`, `README.md`, `design/shell-workflow.svg` — ✅ implemented (built as `neytra_shell`), not yet wired into boot |
+| `system/process/` | `IProcessManager.hpp`, `ProcessManager.*`, `IScheduler.hpp`, `Scheduler.*`, `IIPC.hpp`, `IPC.*`, `README.md`, `design/process-workflow.svg` — ✅ implemented (built as `neytra_process`), consumed by `system/init/ServiceManager` |
+| `system/network/` | `INetworkManager.hpp`, `NetworkManager.*`, `IDHCPClient.hpp`, `DHCPClient.*`, `IWifiManager.hpp`, `WifiManager.*`, `ISocketManager.hpp`, `SocketManager.*`, `README.md`, `design/network-workflow.svg` — ✅ implemented (built as `neytra_network`) |
+| `system/package/` | `IPackageManager.hpp`, `PackageManager.*`, `IDownloader.hpp`, `Downloader.*`, `IInstaller.hpp`, `Installer.*`, `IRepository.hpp`, `Repository.*`, `README.md`, `design/package-workflow.svg` — ✅ implemented (built as `neytra_package`) |
+| `system/security/` | `IUserManager.hpp`, `UserManager.*`, `IPermissionManager.hpp`, `PermissionManager.*`, `ISandbox.hpp`, `Sandbox.*`, `README.md`, `design/security-workflow.svg` — ✅ implemented (built as `neytra_security`), not yet consulted by any caller |
+| `system/drivers/` | `IGPIO.hpp`, `GPIO.*`, `II2C.hpp`, `I2C.*`, `ISPI.hpp`, `SPI.*`, `IUART.hpp`, `UART.*`, `README.md`, `design/drivers-workflow.svg` — ✅ implemented (built as `neytra_drivers`); GPIO/I2C/SPI need real Raspberry Pi hardware, UART is host-testable via a pty |
+| `system/gui/` | `WindowManager.cpp`, `Desktop.cpp`, `Renderer.cpp`, `Framebuffer.cpp`, `README.md`, `design/gui-workflow.svg` — *stub, deliberately deferred to last* |
 | `system/include/{common,config,utils}/` | Empty — reserved for shared headers |
 
 ## `apps/`
@@ -57,7 +58,7 @@ for the convention.
 
 ## `services/`
 
-`logging/`, `networking/`, `ssh/`, `updater/`, `watchdog/` — each contains only `.gitkeep`. Reserved for background system services, likely daemons managed by `system/init/ServiceManager` once it exists.
+`logging/`, `networking/`, `ssh/`, `updater/`, `watchdog/` — each contains only `.gitkeep`. Reserved for background system services; `system/init/ServiceManager` now exists and can spawn arbitrary commands from a config file, but nothing has moved these folders' intended daemons into that config yet.
 
 ## `scripts/`
 
@@ -77,7 +78,7 @@ for the convention.
 
 ## `tests/`
 
-`init/`, `kernel/`, `network/`, `shell/` — each contains only `.gitkeep`. Reserved for automated tests, mirroring the `system/` subsystem names.
+`logger/`, `init/`, `security/`, `process/`, `shell/`, `network/`, `package/`, `drivers/` each hold a real GoogleTest suite (`*_test.cpp`, `libgtest-dev`/`libgmock-dev` via `find_package(GTest REQUIRED)`) exercising their matching `system/` module — all 8 pass under `ctest --output-on-failure`. See [development-workflow.md](development-workflow.md#6-testing) for the testing convention. `kernel/` is still an empty `.gitkeep` placeholder.
 
 ## `qemu/`
 

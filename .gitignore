@@ -10,4 +10,7 @@ build/
 # Compiled from system/ sources by scripts/build_system.sh — regenerate, don't commit
 # (unlike rootfs/bin/busybox, which is a prebuilt third-party binary with no source here).
 rootfs/usr/bin/neytra-log
+rootfs/usr/bin/neytra-shell
+rootfs/usr/bin/neytra-diag
+rootfs/usr/bin/neytra-netup
 

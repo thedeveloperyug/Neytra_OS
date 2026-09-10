@@ -8,8 +8,11 @@ implemented.
 
 ## Status
 
-**Stub — earliest stage.** Bare `.cpp` files with only a placeholder comment each and
-**no header files yet**.
+**Implemented.** `UserManager` (in-memory user table with passwd-file load/save),
+`PermissionManager` (per-uid/resource rule table, root always allowed), and `Sandbox`
+(real `fork()` + optional `chroot()`/`setuid()`/rlimits confinement) are all real, built
+as `neytra_security`, covered by
+[`tests/security/security_test.cpp`](../../tests/security/security_test.cpp).
 
 ## Architecture
 
@@ -29,13 +32,16 @@ identity and `Sandbox` for isolation. See
 
 ## Technical notes
 
-- No headers exist yet — when implementing, follow the interface + constructor-injection
-  pattern established in [`system/init/`](../init/README.md) (`I<ClassName>.hpp` per
-  class, dependencies injected via the constructor, wired together only in a composition
-  root) — see [docs/architecture.md](../../docs/architecture.md#design-principles).
-- Expected consumers once implemented: `system/process/ProcessManager` (before spawning
-  anything privileged) and `system/network/`, `system/package/` (both currently stubs
-  too, both need privileged operations).
+- Follows the interface + constructor-injection pattern from
+  [`system/init/`](../init/README.md) (`IUserManager`/`IPermissionManager`/`ISandbox` +
+  concrete classes, `ILogger&` injected) — see
+  [docs/architecture.md](../../docs/architecture.md#design-principles).
+- `Sandbox::run()` only chroots/drops privilege when given a non-empty `chrootDir`/non-zero
+  `uid` -- both require running as root; without them it still applies rlimits and is
+  fully host-testable (see the test, which never touches chroot/setuid).
+- Expected consumers once wired up: `system/process/ProcessManager` (before spawning
+  anything privileged) and `system/network/`, `system/package/` (both need privileged
+  operations) — none of them call into `system/security/` yet.
 - Deferred deliberately: this is Phase 9 in [docs/roadmap.md](../../docs/roadmap.md),
   well after `init`/`shell` are working.
 

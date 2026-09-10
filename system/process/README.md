@@ -8,10 +8,10 @@ to run or talk to other processes.
 
 ## Status
 
-**Stub — earliest stage.** Unlike `init`/`shell`/`logger`, these are bare `.cpp` files
-with only a placeholder comment (e.g. `// ProcessManager.cpp - placeholder`) and **no
-header files yet** — there isn't even a class declared. Designing the `.hpp` API is the
-first task here, before any implementation.
+**Implemented.** `ProcessManager` (real `fork`/`execvp`/`waitpid`), `Scheduler` (real
+`setpriority`/`getpriority`), and `IPC` (real named-pipe/FIFO messaging via `mkfifo`) are
+all real, built as `neytra_process`, covered by
+[`tests/process/process_test.cpp`](../../tests/process/process_test.cpp).
 
 ## Architecture
 
@@ -31,13 +31,17 @@ first task here, before any implementation.
 
 ## Technical notes
 
-- No headers exist yet — when implementing, follow the interface + constructor-injection
-  pattern established in [`system/init/`](../init/README.md) (`I<ClassName>.hpp` per
-  class, dependencies injected via the constructor, wired together only in a composition
-  root) — see [docs/architecture.md](../../docs/architecture.md#design-principles).
-- Likely primary consumer: `system/init/ServiceManager` (../init/README.md), which needs
-  to spawn and supervise services once it's implemented.
-- Should log through [`system/logger/Logger`](../logger/README.md).
+- Follows the interface + constructor-injection pattern from
+  [`system/init/`](../init/README.md) (`IProcessManager`/`IScheduler`/`IIPC` + concrete
+  classes, `ILogger&` injected) — see
+  [docs/architecture.md](../../docs/architecture.md#design-principles).
+- `Scheduler` uses real `setpriority(2)`/`getpriority(2)` — raising your own niceness
+  (deprioritizing) works unprivileged; lowering it (raising priority) needs `CAP_SYS_NICE`.
+- `IPC` uses real `mkfifo(3)` named pipes; `send()`/`receive()` block for a reader/writer
+  on the other end, matching real FIFO rendezvous semantics.
+- Primary consumer today: `system/init/ServiceManager` (../init/README.md), which spawns
+  configured services through this module's `ProcessManager`.
+- Logs through [`system/logger/Logger`](../logger/README.md) via the injected `ILogger&`.
 - Not on the critical path for the next roadmap milestone — see
   [docs/roadmap.md](../../docs/roadmap.md) (`init` and `shell` come first).
 

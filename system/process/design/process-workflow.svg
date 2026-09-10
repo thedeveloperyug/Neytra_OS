@@ -1,42 +1,40 @@
-<svg viewBox="0 0 940 819" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
+<svg viewBox="0 0 940 787" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Helvetica, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
-<rect x="0" y="0" width="940" height="819" fill="#ffffff"/>
+<rect x="0" y="0" width="940" height="787" fill="#ffffff"/>
 <text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/process/ — Detailed Workflow</text>
-<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned process lifecycle — no headers exist yet; this is the intended design</text>
-<rect x="110" y="78" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Implemented and host-tested — real fork/exec/wait, real nice-value scheduling, real FIFO IPC</text>
+<rect x="110" y="78" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
 <text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Caller requests a new process</text>
-<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">e.g. ServiceManager or Shell calls ProcessManager::spawn(cmd)</text>
-<text x="470" y="132" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">no header exists yet — API not designed</text>
-<line x1="470" y1="143" x2="470" y2="183" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="183" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. ProcessManager::spawn()</text>
-<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">fork() + exec()  (POSIX syscalls)</text>
-<line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="272" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Register with Scheduler</text>
-<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">Scheduler decides run order / priority among managed processes</text>
+<text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">e.g. ServiceManager or Shell calls ProcessManager::spawn(cmd, args)</text>
+<line x1="470" y1="127" x2="470" y2="167" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="167" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. ProcessManager::spawn()</text>
+<text x="470" y="204" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">fork() + execvp()  -- real POSIX syscalls</text>
+<line x1="470" y1="216" x2="470" y2="256" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="256" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="278" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. Scheduler::setPriority(pid, nice)</text>
+<text x="470" y="293" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">real setpriority(2) / getpriority(2)</text>
+<text x="470" y="310" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">raising your own niceness needs no privilege; lowering does</text>
 <line x1="470" y1="321" x2="470" y2="361" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="110" y="361" width="720" height="49" rx="10" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
 <text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. Process runs</text>
 <text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">an independent Linux process, scheduled by the kernel itself</text>
 <line x1="470" y1="410" x2="470" y2="450" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="450" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<rect x="110" y="450" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
 <text x="470" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Inter-process communication</text>
-<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">IPC::send() / IPC::receive()</text>
-<text x="470" y="504" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">pipes, sockets, or shared memory (design TBD)</text>
-<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="555" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. ProcessManager::monitor()</text>
-<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">watches for exit / crash, e.g. via waitpid()</text>
-<line x1="470" y1="604" x2="470" y2="644" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="644" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="666" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. ProcessManager::reap()</text>
-<text x="470" y="681" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">collects exit status, notifies the original caller</text>
-<text x="470" y="698" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">e.g. ServiceManager restarts a crashed service</text>
-<line x1="110" y1="739" x2="830" y2="739" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="110" y="753" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="144" y="766" font-size="11" fill="#1f2937">Planned / stub only</text>
-<rect x="470" y="753" width="26" height="16" rx="4" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
-<text x="504" y="766" font-size="11" fill="#1f2937">External / hardware</text>
-<text x="470" y="809" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; process-workflow.svg</text>
+<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">IPC::send()/receive() over a real mkfifo(3) named pipe</text>
+<line x1="470" y1="499" x2="470" y2="539" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="539" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="561" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. ProcessManager::isRunning() / wait()</text>
+<text x="470" y="576" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">waitpid(WNOHANG) for polling, waitpid(0) to block for exit</text>
+<line x1="470" y1="588" x2="470" y2="628" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="628" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="650" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">7. Exit code recorded</text>
+<text x="470" y="665" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">ProcessInfo{pid, command, running, exitCode} updated, logged via ILogger</text>
+<line x1="110" y1="707" x2="830" y2="707" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="110" y="721" width="26" height="16" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="144" y="734" font-size="11" fill="#1f2937">Implemented &amp; active</text>
+<rect x="470" y="721" width="26" height="16" rx="4" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+<text x="504" y="734" font-size="11" fill="#1f2937">External / hardware</text>
+<text x="470" y="777" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; process-workflow.svg</text>
 </svg>
