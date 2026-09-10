@@ -9,28 +9,36 @@ This is the real, current-state checklist for Neytra OS, following the phase ord
 | 3 | Root filesystem | ✅ ACTIVE | BusyBox v1.36.1 + symlinked applets, standard dirs — see [rootfs.md](rootfs.md) |
 | 4 | Initramfs | ✅ ACTIVE | `output/initramfs.cpio.gz` built via `scripts/build_rootfs.sh` / `create_initramfs.sh` |
 | 5 | QEMU boot | ✅ ACTIVE | `scripts/run_qemu_x86.sh` boots to an interactive shell reproducibly — see [qemu-setup.md](qemu-setup.md) |
-| 6 | Custom shell, logger, process manager (C++) | 🚧 IN PROGRESS | `system/logger/Logger` is implemented and **actually running at boot** — `rootfs/init` calls the statically-linked `neytra-log` CLI, which logs to console + `/var/log/neytra.log` inside the booted VM (verified end-to-end in QEMU). `system/shell/`, `system/process/` are still empty stubs — see [architecture.md](architecture.md) |
-| 6b | Custom init (C++) | 🚧 IN PROGRESS | Interface + dependency-injection skeleton implemented (`IInitManager`/`InitManager`, `IMountManager`/`MountManager`, `IServiceManager`/`ServiceManager`, built as `neytra_init`, verified by `tests/init/init_test.cpp`); `mountAll()`/`startAll()` bodies are still stubs. `rootfs/init` (shell script) is what actually runs today — see [boot-process.md](boot-process.md) |
-| 7 | Networking, SSH, package manager | ⏳ PLANNED | `system/network/`, `system/package/` are empty stubs; `services/ssh/`, `services/networking/`, `services/updater/` are empty folders — see [networking.md](networking.md), [package-manager.md](package-manager.md) |
-| 8 | Framebuffer graphics, GUI | ⏳ PLANNED | `system/gui/{WindowManager,Desktop,Renderer,Framebuffer}` are empty stubs |
-| 9 | Security (users, permissions, sandboxing) | ⏳ PLANNED | `system/security/{UserManager,PermissionManager,Sandbox}` are empty stubs |
+| 6 | Custom shell, logger, process manager (C++) | 🚧 IN PROGRESS | `system/logger/Logger` is implemented and **actually running at boot** — `rootfs/init` calls the statically-linked `neytra-log` CLI, which logs to console + `/var/log/neytra.log` inside the booted VM (verified end-to-end in QEMU). `system/shell/` (real REPL + builtins + external spawn) and `system/process/` (real fork/exec/wait, nice-value scheduling, FIFO IPC) are **implemented, host-tested, and now boot-reachable too** — `scripts/build_system.sh` installs a statically-linked `neytra-shell` CLI into `rootfs/usr/bin/`, runnable manually from the BusyBox prompt after boot (verified end-to-end in QEMU: real builtins, real external command spawning via `ProcessManager`). It is not the automatic login shell yet — BusyBox still runs at boot and hands off to `/bin/sh` — see [system/README.md](../system/README.md) for the full testing guide |
+| 6b | Custom init (C++) | 🚧 IN PROGRESS | `IInitManager`/`InitManager`, `IMountManager`/`MountManager`, `IServiceManager`/`ServiceManager` are implemented for real — `MountManager::mountAll()` issues real `mount(2)` calls, `ServiceManager::startAll()` parses a config and spawns services via `system/process/ProcessManager` — built as `neytra_init`, verified by `tests/init/init_test.cpp` (against a safe temp tmpfs, not real `/proc`/`/sys`/`/dev`). `rootfs/init` (shell script) is what actually runs at boot today — see [boot-process.md](boot-process.md) |
+| 7 | Networking, SSH, package manager | 🚧 PARTIAL | `system/network/` (real sockets, interface enumeration, a full RFC 2131 DHCP client, sysfs wifi-interface detection) and `system/package/` (real HTTP/1.1 downloader, tar-based installer, repository index, all wired together) are **implemented and host-tested** (`tests/network/network_test.cpp`, `tests/package/package_test.cpp`) but not invoked from boot or the shell yet; `services/ssh/`, `services/networking/`, `services/updater/` are still empty folders — see [networking.md](networking.md), [package-manager.md](package-manager.md) |
+| 8 | Framebuffer graphics, GUI | ⏳ PLANNED | `system/gui/{WindowManager,Desktop,Renderer,Framebuffer}` are empty stubs — deliberately untouched; explicitly deferred to last |
+| 9 | Security (users, permissions, sandboxing) | 🚧 PARTIAL | `system/security/{UserManager,PermissionManager,Sandbox}` are **implemented and host-tested** (`tests/security/security_test.cpp`) — real passwd-style user table, a per-uid/resource permission rule table, and a real fork+chroot+rlimit sandbox — but no other module calls into it yet (no enforcement wired up) |
 | 10 | Applications | ⏳ PLANNED | `apps/{terminal,editor,calculator,monitor,settings}/` contain only `.gitkeep` |
 | 11 | Raspberry Pi deployment, ARM64 support | 🚧 PARTIAL | Boot files present in `boot/` but arm64 kernel build, imaging, and flashing are not wired up — see [raspberrypi.md](raspberrypi.md) |
 
-## What "done" looks like for Phase 6/6b (the current frontier)
+## What "done" looks like for Phase 6/6b/7/9 (the current frontier)
 
-The next concrete milestone is making the C++ layer real, starting with the smallest useful slice:
+The C++ layer went from one working module (`Logger`) to eight in one push — all of `system/` except `system/gui/` now has a real, host-tested implementation behind interfaces:
 
-1. ~~Give `system/logger/Logger` an actual implementation~~ — **done**: leveled console+file logging, built as `neytra_logger`, verified by `tests/logger/logger_test.cpp` (`ctest`). Retrofitted behind an `ILogger` interface so callers depend on the interface, not the concrete singleton (see [architecture.md](architecture.md#design-principles)).
-2. ~~Design `system/init/`'s interfaces and wire dependency injection~~ — **done**: `IMountManager`/`IServiceManager`/`IInitManager` + constructor-injected `InitManager`, composition root in `system/init/main.cpp`, verified by `tests/init/init_test.cpp`.
-3. Implement `MountManager::mountAll()` and `ServiceManager::startAll()` for real, well enough to replace `rootfs/init`'s three `mount` calls and banner, and boot-test it in QEMU alongside the existing shell script (don't remove `rootfs/init`'s safety net until the replacement is proven).
-4. Implement `system/shell/{Shell,CommandParser,BuiltinCommands}` (behind interfaces, constructor-injected, per [architecture.md](architecture.md#design-principles)) enough to replace the final `exec /bin/sh` with the native shell for a handful of builtins (`cd`, `echo`, `exit`).
-5. Only then move to `ServiceManager`'s real service-starting logic + the Phase 7+ subsystems, since they depend on init/service infrastructure existing first.
+1. ~~Give `system/logger/Logger` an actual implementation~~ — **done**: leveled console+file logging, built as `neytra_logger`, verified by `tests/logger/logger_test.cpp` (`ctest`), and **actually running at boot**.
+2. ~~Design `system/init/`'s interfaces and wire dependency injection~~ — **done**: `IMountManager`/`IServiceManager`/`IInitManager` + constructor-injected `InitManager`.
+3. ~~Implement `MountManager::mountAll()` and `ServiceManager::startAll()` for real~~ — **done**: real `mount(2)` calls and real service-spawning via `IProcessManager`. **Not yet boot-tested in QEMU** — that's the next concrete step for init specifically (don't remove `rootfs/init`'s safety net until it is).
+4. ~~Implement `system/shell/{Shell,CommandParser,BuiltinCommands}`~~ — **done**: full REPL, quote-aware parsing, 8 builtins, external command spawning. **Not yet wired in** to replace `exec /bin/sh` in `rootfs/init`.
+5. ~~Implement `system/process/{ProcessManager,Scheduler,IPC}`~~ — **done**: real fork/exec/wait, nice-value scheduling, FIFO-based IPC. Already consumed by `system/init/ServiceManager`.
+6. ~~Implement `system/network/`, `system/package/`, `system/security/`, `system/drivers/`~~ — **done**: see the Phase 7/9 notes above and each module's own README for exactly what's real vs. deliberately out of scope (e.g. `WifiManager::scan()`, GPIO/I2C/SPI needing real Raspberry Pi hardware).
 
-See [diagrams/subsystem-map.svg](diagrams/subsystem-map.svg) for the full planned class map and [architecture.md](architecture.md) for how it all fits together.
+Next concrete steps, roughly in order:
+
+1. Boot-test `system/init/` in QEMU (behind a flag/alongside `rootfs/init`), since host tests alone don't prove a real boot.
+2. Wire `system/shell/Shell` in as an optional login shell (still keeping BusyBox as the fallback) and give it a `pkg` builtin that calls into `system/package/PackageManager`.
+3. Have `system/process/ProcessManager` (or whoever spawns untrusted/privileged work) actually call `system/security/PermissionManager::check()` before proceeding — right now security exists but nothing consults it.
+4. Only after that: Phase 8 (GUI), deliberately last per the project's own stated philosophy.
+
+See [diagrams/subsystem-map.svg](diagrams/subsystem-map.svg) for the (now dated — see the architecture doc's note) planned class map and [architecture.md](architecture.md) for how it all fits together.
 
 ## Known cleanup items (not blocking, but worth tracking)
 
-- Most `scripts/*.sh` are still `echo "... placeholder"` stubs: `build_kernel.sh`, `build_system.sh`, `clean.sh`, `create_image.sh`, `flash_sd.sh`, `run_qemu_arm64.sh`, `setup_env.sh`. See [development-workflow.md](development-workflow.md#4-script-reference) for the full table of what each should eventually do.
-- Root `CMakeLists.txt` now builds `system/logger/` and `system/init/` (see Phase 6/6b above); the rest of `system/` and the root `Makefile` are still placeholders — nothing else is wired up to compile yet.
-- `configs/`, `toolchain/`, `third_party/`, `tests/`, `qemu/{disks,firmware,logs,snapshots}/` are all empty scaffolding (`.gitkeep` only), reserved for later phases.
+- Most `scripts/*.sh` are still `echo "... placeholder"` stubs: `build_kernel.sh`, `clean.sh`, `create_image.sh`, `flash_sd.sh`, `run_qemu_arm64.sh`, `setup_env.sh`. `build_system.sh` and `build_rootfs.sh` are real. See [development-workflow.md](development-workflow.md#4-script-reference) for the full table of what each should eventually do.
+- Root `CMakeLists.txt` now builds all of `system/` except `system/gui/` (8 static/executable targets — see [architecture.md](architecture.md)); the root `Makefile` is still a placeholder.
+- `configs/`, `toolchain/`, `third_party/`, `qemu/{disks,firmware,logs,snapshots}/` are all empty scaffolding (`.gitkeep` only), reserved for later phases. `tests/` now has 8 real suites (one per implemented module), all passing under `ctest`.

@@ -22,12 +22,12 @@ This directory is the technical documentation for the project. Everything here r
 | [rootfs.md](rootfs.md) | Root filesystem layout, BusyBox, init, inittab |
 | [qemu-setup.md](qemu-setup.md) | How the OS is tested in QEMU, flags explained |
 | [raspberrypi.md](raspberrypi.md) | Raspberry Pi 4B deployment path and its current status |
-| [networking.md](networking.md) | Planned networking architecture (not yet implemented) |
-| [package-manager.md](package-manager.md) | Planned package manager architecture (not yet implemented) |
+| [networking.md](networking.md) | Networking architecture — implemented and host-tested, not yet wired into boot |
+| [package-manager.md](package-manager.md) | Package manager architecture — implemented and host-tested, not yet wired into boot |
 
 ## Diagrams
 
-All architecture diagrams are hand-authored SVGs in [diagrams/](diagrams/), referenced from the docs above:
+All architecture diagrams are hand-authored SVGs in [diagrams/](diagrams/), referenced from the docs above. **Note:** these top-level diagrams were authored early on and describe the whole-repo picture at a coarse grain; several (`system-architecture.svg`, `directory-structure.svg`, `init-flow.svg`, `subsystem-map.svg`) still show the `system/` C++ layer as planned stubs and predate the 2026-09-12 implementation pass covering `init`/`shell`/`process`/`network`/`package`/`security`/`drivers` — for current per-module status, see each module's own `README.md` and `design/*-workflow.svg` (linked from [architecture.md](architecture.md)'s module table), which are kept up to date as the source of truth:
 
 - [diagrams/system-architecture.svg](diagrams/system-architecture.svg) — full layered stack, hardware to applications
 - [diagrams/boot-sequence.svg](diagrams/boot-sequence.svg) — power-on to shell, both boot paths

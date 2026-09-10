@@ -54,10 +54,13 @@ neytra-log info init "shutdown handler registered (SIGTERM/SIGPWR -> poweroff -f
 neytra-log info init "boot complete, handing off to shell"
 ```
 
-Nothing else calls it yet — `system/shell/`, `system/process/`, etc. are still stubs
-(see [docs/roadmap.md](../../docs/roadmap.md)). **Update this section** as each of those
-gains real logic and starts logging through `ILogger` too, so it stays a true picture of
-what the OS actually logs, not just what it's capable of.
+Every other implemented module (`system/init/`, `system/shell/`, `system/process/`,
+`system/network/`, `system/package/`, `system/security/`, `system/drivers/`) takes an
+`ILogger&` via constructor injection and logs through it already — but only `InitManager`'s
+`main.cpp` path is actually invoked at boot today (the rest are exercised by their own
+`ctest` suites, not by a running system). **Update this section** as each module gets
+wired into the real boot/shell path, so it stays a true picture of what the OS actually
+logs at runtime, not just what it's capable of.
 
 ## Files
 

@@ -8,8 +8,12 @@ discussion this README summarizes.
 
 ## Status
 
-**Stub — earliest stage.** Bare `.cpp` files with only a placeholder comment each and
-**no header files yet**.
+**Implemented.** `Repository` (flat-file package index), `Downloader` (a real HTTP/1.1
+GET client over a raw TCP socket -- no TLS), `Installer` (extracts archives by spawning
+`tar` via [`system/process/ProcessManager`](../process/README.md)), and `PackageManager`
+(orchestrates all three) are all real, built as `neytra_package`, covered by
+[`tests/package/package_test.cpp`](../../tests/package/package_test.cpp) — which spins up
+a throwaway local HTTP server to exercise the full install pipeline end to end.
 
 ## Architecture
 
@@ -30,12 +34,16 @@ for the full step-by-step detail.
 
 ## Technical notes
 
-- No headers exist yet — when implementing, follow the interface + constructor-injection
-  pattern established in [`system/init/`](../init/README.md) (`I<ClassName>.hpp` per
-  class, dependencies injected via the constructor, wired together only in a composition
-  root) — see [docs/architecture.md](../../docs/architecture.md#design-principles).
-- `Downloader` will depend on [`system/network/`](../network/README.md) (also a stub) —
-  implement networking first.
+- Follows the interface + constructor-injection pattern from
+  [`system/init/`](../init/README.md) (`IRepository`/`IDownloader`/`IInstaller`/
+  `IPackageManager` + concrete classes) — see
+  [docs/architecture.md](../../docs/architecture.md#design-principles).
+- `Downloader` depends on [`system/network/ISocketManager`](../network/README.md)
+  (constructor-injected) — plain HTTP/1.1 only, no TLS/HTTPS support.
+- `Installer` shells out to the real `tar` binary via
+  [`system/process/IProcessManager`](../process/README.md) rather than reimplementing
+  archive parsing (see design principle #6: don't over-build what a standard tool already
+  does well).
 - Likely install targets are the already-existing empty directories `usr/`, `opt/`,
   `srv/` under [`rootfs/`](../../rootfs/); [`third_party/`](../../third_party/) hints at
   an intent to vendor some dependencies directly rather than only fetch at runtime.

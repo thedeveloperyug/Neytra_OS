@@ -1,5 +1,10 @@
-// CommandParser.hpp - placeholder
-
+// CommandParser.hpp - quote-aware whitespace tokenizer.
 #pragma once
 
-class CommandParser {};
+#include "ICommandParser.hpp"
+
+class CommandParser : public ICommandParser {
+public:
+    ParsedCommand parse(const std::string& line) const override;
+};
+

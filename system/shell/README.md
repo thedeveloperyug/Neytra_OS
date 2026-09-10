@@ -8,8 +8,17 @@ this module is where a Neytra-native shell would take over instead.
 
 ## Status
 
-**Stub.** Every class body is empty (`class Shell {};` etc.) and `main.cpp`'s
-`main_shell()` just `return 0;`.
+**Implemented, and reachable inside a booted VM.** `CommandParser` (quote-aware
+tokenizer), `BuiltinCommands` (`cd`/`pwd`/`echo`/`export`/`unset`/`env`/`exit`/`help`),
+and `Shell` (a real read-eval-print loop that spawns external commands via
+[`system/process/ProcessManager`](../process/README.md)) are all real, built as
+`neytra_shell`, covered by [`tests/shell/shell_test.cpp`](../../tests/shell/shell_test.cpp).
+It's also built as a statically-linked executable, `neytra-shell` (see `main.cpp` /
+root `CMakeLists.txt`), installed into `rootfs/usr/bin/` by `scripts/build_system.sh` --
+run it manually from the BusyBox prompt after boot to try it for real (see
+[system/README.md](../README.md) for the full step-by-step guide, with a real transcript).
+It is **not** the automatic login shell yet, though -- BusyBox `/bin/sh` is still what
+`rootfs/init` hands off to at boot (see [docs/roadmap.md](../../docs/roadmap.md)).
 
 ## Architecture
 
@@ -23,7 +32,7 @@ process. See [design/shell-workflow.svg](design/shell-workflow.svg) for the full
 
 | File | Responsibility |
 |---|---|
-| `main.cpp` | `main_shell()` — the eventual shell entry point |
+| `main.cpp` | Composition root; `main_shell()` builds the collaborators, `main()` makes it the real `neytra-shell` executable |
 | `Shell.hpp` / `.cpp` | The read-eval-print loop; owns a `CommandParser` and `BuiltinCommands` |
 | `CommandParser.hpp` / `.cpp` | Tokenizes a raw input line into a command + arguments |
 | `BuiltinCommands.hpp` / `.cpp` | Implements builtins that can't be external processes (e.g. `cd`) |

@@ -8,8 +8,13 @@ target this project boots today has no use for them.
 
 ## Status
 
-**Stub — earliest stage.** Bare `.cpp` files with only a placeholder comment each and
-**no header files yet**.
+**Implemented, but only meaningfully testable on real Raspberry Pi hardware.** `GPIO`
+(sysfs `/sys/class/gpio/...`), `I2C` (`/dev/i2c-*` via `ioctl(I2C_SLAVE)`), and `SPI`
+(`/dev/spidev*` via `ioctl(SPI_IOC_MESSAGE)`) are real Linux driver-API implementations,
+but this project's QEMU x86_64 target has none of that hardware, so calls fail gracefully
+-- that's not a bug, [`tests/drivers/drivers_test.cpp`](../../tests/drivers/drivers_test.cpp)
+asserts exactly that. `UART` is different: it's plain termios over any character device,
+so the test exercises it for real using a pty pair.
 
 ## Architecture
 
@@ -30,11 +35,10 @@ consumer flow (no shared parent class). See
 
 ## Technical notes
 
-- No headers exist yet — when implementing, follow the interface + constructor-injection
-  pattern established in [`system/init/`](../init/README.md) (`I<ClassName>.hpp` per
-  class, dependencies injected via the constructor, wired together only in a composition
-  root) — see [docs/architecture.md](../../docs/architecture.md#design-principles). Note
-  that four independent, unrelated drivers may not need to share one interface each — use
+- Follows the interface pattern from [`system/init/`](../init/README.md)
+  (`IGPIO`/`II2C`/`ISPI`/`IUART` + concrete classes) — see
+  [docs/architecture.md](../../docs/architecture.md#design-principles). As anticipated,
+  the four drivers do **not** share one interface each (design principle #6) — use
   judgement (see design principle #6).
 - These map to memory-mapped BCM2711 peripheral registers, not applicable when running
   under QEMU x86_64 — see [docs/raspberrypi.md](../../docs/raspberrypi.md) for the

@@ -4,12 +4,15 @@
 #include "InitManager.hpp"
 #include "Logger.hpp"
 #include "MountManager.hpp"
+#include "ProcessManager.hpp"
 #include "ServiceManager.hpp"
 
 int main_init() {
-    MountManager mountManager;
-    ServiceManager serviceManager;
+    MountManager mountManager(Logger::instance());
+    ProcessManager processes(Logger::instance());
+    ServiceManager serviceManager(processes, Logger::instance(), "/etc/neytra/services.conf");
     InitManager initManager(mountManager, serviceManager, Logger::instance());
     return initManager.run() ? 0 : 1;
 }
+
 

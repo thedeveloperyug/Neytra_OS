@@ -1,33 +1,47 @@
 # Package Manager
 
-> **Status: PLANNED — not implemented.** Every file described below is currently a one-line placeholder (e.g. `// PackageManager.cpp - placeholder`). This doc describes the architecture implied by the existing folder/class scaffolding under [system/package/](../system/package/), as a design reference — not a description of working code.
+> **Status: IMPLEMENTED (host-tested), not yet wired into boot or the shell.** Every
+> class below is a real implementation — a real HTTP/1.1 downloader, a real tar-based
+> installer, a real flat-file repository index — built as `neytra_package` and covered by
+> [`tests/package/package_test.cpp`](../tests/package/package_test.cpp) (which spins up a
+> throwaway local HTTP server to exercise the full pipeline end to end). See
+> [system/package/README.md](../system/package/README.md) for the authoritative current
+> status; this doc is the deeper design discussion.
 
-## Why this is deferred
+## Why the package manager came after networking
 
-Per the root [README.md](../README.md)'s development strategy, the package manager is explicitly a later phase (see [roadmap.md](roadmap.md)), after the core boot loop and `system/init`/`system/shell` are working. See [architecture.md](architecture.md) for the full layering and current status.
+Per the root [README.md](../README.md)'s development strategy, the package manager was a
+later phase (see [roadmap.md](roadmap.md)) that depends on `system/network/` existing
+first — `Downloader` is constructor-injected with `system/network/ISocketManager`. See
+[architecture.md](architecture.md) for the full layering and current status.
 
-## Scaffolded classes
+## Classes
 
-| Class | File | Inferred responsibility |
+| Class | File | Real responsibility |
 |---|---|---|
-| `PackageManager` | [system/package/PackageManager.cpp](../system/package/PackageManager.cpp) | Top-level coordinator: install/remove/upgrade/query, owns the other three classes |
-| `Repository` | [system/package/Repository.cpp](../system/package/Repository.cpp) | Package index/metadata — what's available, versions, dependencies |
-| `Downloader` | [system/package/Downloader.cpp](../system/package/Downloader.cpp) | Fetches package archives, presumably over the (also planned) network stack — see [networking.md](networking.md) |
-| `Installer` | [system/package/Installer.cpp](../system/package/Installer.cpp) | Unpacks and places files on disk, updates local package state |
+| `PackageManager` | [system/package/PackageManager.cpp](../system/package/PackageManager.cpp) | Top-level coordinator: `install()`/`remove()`/`isInstalled()`, orchestrates the other three via constructor-injected interfaces |
+| `Repository` | [system/package/Repository.cpp](../system/package/Repository.cpp) | Loads a flat-file package index (`name\|version\|url` per line), `find()`/`list()` |
+| `Downloader` | [system/package/Downloader.cpp](../system/package/Downloader.cpp) | Real HTTP/1.1 GET client over a raw TCP socket (via [`system/network/ISocketManager`](networking.md)) — no TLS/HTTPS |
+| `Installer` | [system/package/Installer.cpp](../system/package/Installer.cpp) | Extracts archives by spawning the real `tar` binary via [`system/process/IProcessManager`](architecture.md), doesn't reimplement archive parsing |
 
-## Proposed relationship to the rest of the system
+## Relationship to the rest of the system
 
-Per the [subsystem map](diagrams/subsystem-map.svg), `PackageManager` would be started by `system/init/ServiceManager`. `Downloader` implies a dependency on `system/network/NetworkManager` (or at least `SocketManager`) — meaning package management is realistically a **later** milestone than networking, not an independent one.
+Per the [subsystem map](diagrams/subsystem-map.svg), `PackageManager` would eventually be
+started by `system/init/ServiceManager` — that wiring doesn't exist yet. `Downloader`'s
+dependency on `system/network/ISocketManager` is real and constructor-injected today, so
+the "package management is a later milestone than networking" ordering from the original
+design held up in practice.
 
-## Open design questions (not yet decided)
+## Known limitations / resolved and open questions
 
-- **Package format** — no format (tarball + manifest? something custom?) is defined anywhere in the repo yet.
-- **Where packages install to** — `usr/`, `opt/`, and `srv/` all already exist as empty standard directories in [rootfs/](../rootfs/) (see [rootfs.md](rootfs.md)) and are natural candidates.
-- **Trust/verification** — signing or checksum verification would presumably involve the planned `system/security/` classes (`PermissionManager`, `Sandbox`).
-- **Third-party sources** — [`third_party/`](../third_party/) already has `busybox/`, `dropbear/`, `zlib/` placeholder folders, suggesting an intent to vendor some dependencies directly rather than only fetch at runtime.
+- **Package format**: resolved pragmatically — plain tar archives, extracted via the real `tar` binary (no custom format or manifest yet).
+- **Where packages install to** — `PackageManager`'s constructor takes an `installRoot` string; `usr/`, `opt/`, `srv/` in [rootfs/](../rootfs/) remain natural candidates (see [rootfs.md](rootfs.md)), but nothing wires a default yet.
+- **Trust/verification** — still open; no signing or checksum verification exists, and `system/security/` (also implemented now) isn't consulted before install.
+- **Third-party sources** — [`third_party/`](../third_party/) still has only `busybox/`, `dropbear/`, `zlib/` placeholder folders; nothing is vendored through `PackageManager` yet.
+- **No TLS** — `Downloader` only speaks plain `http://`, deliberately, to keep the first real implementation simple.
 
 ## See also
 
 - [architecture.md](architecture.md) — full layered architecture and status legend.
-- [networking.md](networking.md) — the prerequisite subsystem for `Downloader`.
+- [networking.md](networking.md) — the prerequisite subsystem for `Downloader`, also now implemented.
 - [roadmap.md](roadmap.md) — where package management sits in the overall phase plan.

@@ -2,34 +2,36 @@
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
 <rect x="0" y="0" width="940" height="714" fill="#ffffff"/>
 <text x="470" y="28" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">system/security/ — Detailed Workflow</text>
-<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Planned permission-check sequence — no headers exist yet; this is the intended design</text>
-<rect x="110" y="78" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Privileged caller requests an action</text>
+<text x="470" y="48" text-anchor="middle" font-size="12" fill="#64748b">Implemented and host-tested — not yet consulted by any other module (none call into it yet)</text>
+<rect x="110" y="78" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="470" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">1. Caller requests a privileged action</text>
 <text x="470" y="115" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">e.g. ProcessManager before spawning, PackageManager before install</text>
-<line x1="470" y1="127" x2="470" y2="167" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="167" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. PermissionManager.check(user, action)</text>
-<text x="470" y="204" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">the single gatekeeping entry point</text>
-<text x="470" y="221" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">no header exists yet — API not designed</text>
+<text x="470" y="132" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">no real caller wired up yet</text>
+<line x1="470" y1="143" x2="470" y2="183" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="183" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">2. PermissionManager::check(uid, resource, perm)</text>
+<text x="470" y="220" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">uid 0 (root) always allowed; else looked up in the rule table</text>
 <line x1="470" y1="232" x2="470" y2="272" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="272" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. UserManager.getUser(uid)</text>
-<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">resolves identity and group memberships</text>
+<rect x="110" y="272" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="294" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">3. UserManager::findByUid(uid)</text>
+<text x="470" y="309" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">in-memory table, seeded with root; loadable from a passwd(5) file</text>
 <line x1="470" y1="321" x2="470" y2="361" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="361" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. Evaluate policy</text>
-<text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">PermissionManager decides allow / deny</text>
+<rect x="110" y="361" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">4. Rule table lookup</text>
+<text x="470" y="398" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">map&lt;{uid,resource}, set&lt;Permission&gt;&gt; -- grant()/revoke() mutate it</text>
 <line x1="470" y1="410" x2="470" y2="450" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="450" width="720" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Sandbox.confine(process)</text>
-<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">applies isolation if the action is allowed but restricted</text>
-<text x="470" y="504" text-anchor="middle" font-size="10" font-style="italic" fill="#92400e">e.g. namespaces / seccomp / chroot (conceptual, TBD)</text>
-<line x1="470" y1="515" x2="470" y2="555" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="110" y="555" width="720" height="49" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="470" y="577" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Decision returned to caller</text>
-<text x="470" y="592" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">caller proceeds only if allowed</text>
+<rect x="110" y="450" width="720" height="49" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">5. Denied attempts are logged</text>
+<text x="470" y="487" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">via the injected ILogger -- a real audit trail, not just a bool</text>
+<line x1="470" y1="499" x2="470" y2="539" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="110" y="539" width="720" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="561" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">6. Sandbox::run() (separate, optional path)</text>
+<text x="470" y="576" text-anchor="middle" font-size="11.5" font-family="Consolas, monospace" fill="#374151">fork() + rlimits always; chroot()/setuid() only if given a uid/dir</text>
+<text x="470" y="593" text-anchor="middle" font-size="10" font-style="italic" fill="#1d4ed8">chroot/setuid need root; rlimits-only mode works unprivileged</text>
 <line x1="110" y1="634" x2="830" y2="634" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="110" y="648" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
-<text x="144" y="661" font-size="11" fill="#1f2937">Planned / stub only</text>
+<rect x="110" y="648" width="26" height="16" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="144" y="661" font-size="11" fill="#1f2937">Implemented &amp; active</text>
+<rect x="470" y="648" width="26" height="16" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="7,5"/>
+<text x="504" y="661" font-size="11" fill="#1f2937">Planned / stub only</text>
 <text x="470" y="704" text-anchor="middle" font-size="10" fill="#94a3b8">Neytra OS &#183; security-workflow.svg</text>
 </svg>

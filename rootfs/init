@@ -28,5 +28,13 @@ printf '\n'
 trap "poweroff -f" SIGTERM SIGPWR
 $LOG info init "shutdown handler registered (SIGTERM/SIGPWR -> poweroff -f)"
 
+# Bring up loopback + any real interface and DHCP it, in the background so a
+# missing cable/DHCP server never delays the boot -- see system/README.md.
+NETUP=/usr/bin/neytra-netup
+if [ -x "$NETUP" ]; then
+    "$NETUP" &
+    $LOG info init "network bring-up started in background (neytra-netup)"
+fi
+
 $LOG info init "boot complete, handing off to shell"
 /bin/sh
